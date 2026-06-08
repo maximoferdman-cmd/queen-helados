@@ -8,12 +8,14 @@ export default function CartSheet({ open, onClose }) {
 
   if (!open) return null
 
-  function handleSend() {
+function handleSend() {
     if (cart.length === 0) return alert('Tu pedido está vacío')
     const url = buildWhatsAppUrl(clientName)
     window.open(url, '_blank')
+    clearCart()
+    setClientName('')
+    onClose()
   }
-
   return (
     <div className={styles.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
       <div className={styles.sheet}>
