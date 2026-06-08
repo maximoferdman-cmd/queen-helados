@@ -1,0 +1,102 @@
+import { createContext, useContext, useState, useEffect } from 'react'
+import { initialCategories, initialProducts, initialConfig } from '../data/initialData'
+
+const AppContext = createContext(null)
+
+const LS_PRODUCTS   = 'friomax_products'
+const LS_CATEGORIES = 'friomax_categories'
+const LS_CONFIG     = 'friomax_config'
+
+function load(key, fallback) {
+  try {
+    const saved = localStorage.getItem(key)
+    return saved ? JSON.parse(saved) : fallback
+  } catch { return fallback }
+}
+
+export function AppProvider({ children }) {
+  const [products,   setProductsRaw]   = useState(() => load(LS_PRODUCTS,   initialProducts))
+  const [categories, setCategoriesRaw] = useState(() => load(LS_CATEGORIES, initialCategories))
+  const [config,     setConfigRaw]     = useState(() => load(LS_CONFIG,      initialConfig))
+  const [cart,       setCart]          = useState([])
+
+  // Persist to localStorage on every change
+  const setProducts = (v) => { setProductsRaw(v); localStorage.setItem(LS_PRODUCTS, JSON.stringify(v)) }
+  const setCategories = (v) => { setCategoriesRaw(v); localStorage.setItem(LS_CATEGORIES, JSON.stringify(v)) }
+  const setConfig = (v) => { setConfigRaw(v); localStorage.setItem(LS_CONFIG, JSON.stringify(v)) }
+
+  // --- Cart helpers ---
+  const cartCount   = cart.reduce((a, c) => a + c.qty, 0)
+  const cartTotal   = cart.reduce((a, c) => a + (c.showPrice ? c.price * c.qty : 0), 0)
+  const hasPrice    = cart.some(c => c.showPrice)
+
+  function setItemQty(productId, qty) {
+    const product = products.find(p => p.id === productId)
+    if (!product) return
+    setCart(prev => {
+      const exists = prev.find(c => c.id === productId)
+      if (qty <= 0) return prev.filter(c => c.id !== productId)
+      if (exists)   return prev.map(c => c.id === productId ? { ...c, qty } : c)
+      return [...prev, { id: productId, name: product.name, emoji: product.emoji, price: product.price, showPrice: product.showPrice, qty }]
+    })
+  }
+
+  function getItemQty(productId) {
+    return cart.find(c => c.id === productId)?.qty || 0
+  }
+
+  function removeFromCart(productId) {
+    setCart(prev => prev.filter(c => c.id !== productId))
+  }
+
+  function clearCart() { setCart([]) }
+
+  function buildWhatsAppUrl(clientName) {
+    let msg = config.greeting + '\n\n'
+    cart.forEach(item => { msg += `• ${item.qty} ${item.name}\n` })
+    if (clientName) msg += `\nNombre: ${clientName}`
+    msg += '\n\n' + config.farewell
+    return `https://wa.me/${config.waNumber}?text=${encodeURIComponent(msg)}`
+  }
+
+  // --- Product helpers ---
+  function addProduct(product) {
+    const newId = Math.max(0, ...products.map(p => p.id)) + 1
+    setProducts([...products, { ...product, id: newId, active: true }])
+  }
+
+  function updateProduct(id, changes) {
+    setProducts(products.map(p => p.id === id ? { ...p, ...changes } : p))
+  }
+
+  function deleteProduct(id) {
+    setProducts(products.filter(p => p.id !== id))
+    removeFromCart(id)
+  }
+
+  // --- Category helpers ---
+  function addCategory(cat) {
+    if (categories.find(c => c.id === cat.id)) return false
+    setCategories([...categories, cat])
+    return true
+  }
+
+  function deleteCategory(id) {
+    setCategories(categories.filter(c => c.id !== id))
+  }
+
+  return (
+    <AppContext.Provider value={{
+      products, categories, config, cart,
+      cartCount, cartTotal, hasPrice,
+      setItemQty, getItemQty, removeFromCart, clearCart, buildWhatsAppUrl,
+      addProduct, updateProduct, deleteProduct,
+      addCategory, deleteCategory,
+      setConfig,
+    }}>
+      {children}
+    </AppContext.Provider>
+  )
+}
+
+export const useApp = () => useContext(AppContext)

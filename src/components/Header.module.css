@@ -1,0 +1,64 @@
+.header {
+  background: var(--primary);
+  padding: 14px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand {
+  font-family: var(--font-display);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.brand span { color: var(--accent2); }
+.right { display: flex; gap: 10px; align-items: center; }
+.cartBtn {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  border-radius: 50px;
+  padding: 8px 16px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  font-family: var(--font-body);
+  transition: background 0.2s;
+}
+.cartBtn:hover { background: rgba(255,255,255,0.25); }
+.badge {
+  background: var(--badge);
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+}
+.adminBtn {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+.adminBtn:hover { color: #fff; background: rgba(255,255,255,0.2); }
+.logo {
+  height: 160px;
+  width: auto;
+  object-fit: contain;
+}
