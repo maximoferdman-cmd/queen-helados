@@ -47,9 +47,15 @@ export default function Catalog() {
       </div>
 
       {/* Category pills */}
-      <p className={styles.sectionTitle}>Categorías</p>
-      <div style={{position:'relative', display:'flex', alignItems:'center'}}>
-  <button className={styles.scrollBtn} onClick={() => document.getElementById('catScroll').scrollBy({left:-150, behavior:'smooth'})}>‹</button>
+<p className={styles.sectionTitle}>Categorías</p>
+<div style={{position:'relative', display:'flex', alignItems:'center'}}>
+  <button 
+    className={styles.scrollBtn} 
+    onClick={() => {
+      const el = document.getElementById('catScroll')
+      if(el.scrollLeft > 0) el.scrollBy({left: -150, behavior: 'smooth'})
+    }}
+  >‹</button>
   <div className={styles.catScroll} id="catScroll">
     <button className={`${styles.pill} ${activeCat === 'todas' ? styles.activePill : ''}`} onClick={() => setActiveCat('todas')}>
       🌟 Todas
@@ -64,7 +70,13 @@ export default function Catalog() {
       </button>
     ))}
   </div>
-  <button className={styles.scrollBtn} onClick={() => document.getElementById('catScroll').scrollBy({left:150, behavior:'smooth'})}>›</button>
+  <button 
+    className={styles.scrollBtn} 
+    onClick={() => {
+      const el = document.getElementById('catScroll')
+      if(el.scrollLeft < el.scrollWidth - el.clientWidth) el.scrollBy({left: 150, behavior: 'smooth'})
+    }}
+  >›</button>
 </div>
 
       {/* Products by category */}
