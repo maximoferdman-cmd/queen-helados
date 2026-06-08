@@ -27,8 +27,6 @@ export default function Catalog() {
         <p>{config.tagline}</p>
         <div className={styles.chips}>
           <span className={styles.chip}>🚚 Envío a domicilio</span>
-          <span className={styles.chip}>❄ Siempre fresco</span>
-          <span className={styles.chip}>🔥 Pedidos al instante</span>
         </div>
       </div>
 
