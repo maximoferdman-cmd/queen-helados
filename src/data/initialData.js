@@ -25,8 +25,7 @@ export const initialCategories = [
 
 export const initialProducts = [
  // --- ACAPULCO ---
-  { id: 1,   name: 'Agua 2 Sabores Frutilla-Frambuesa x40',         desc: 'Acapulco - 20 de cada sabor',           price: 11450, emoji: '🧊', cat: 'helados', subcat: 'acapulco', showPrice: true, active: true },
-  { id: 67,  name: 'Agua 2 Sabores Frutilla-Naranja x40',           desc: 'Acapulco - 20 de cada sabor',           price: 11450, emoji: '🧊', cat: 'helados', subcat: 'acapulco', showPrice: true, active: true },
+  { id: 1, name: 'Agua 2 Sabores x40', desc: 'Acapulco - 20 Frutilla-Frambuesa y 20 Frutilla-Naranja', price: 11450, emoji: '🧊', cat: 'helados', subcat: 'acapulco', showPrice: true, active: true },
   { id: 2,   name: 'Palito de Crema Frutilla-DDL x40',              desc: 'Acapulco',                              price: 14800, emoji: '🍦', cat: 'helados', subcat: 'acapulco', showPrice: true, active: true },
   { id: 68,  name: 'Palito de Crema Vainilla-Chocolate x40',        desc: 'Acapulco',                              price: 14800, emoji: '🍦', cat: 'helados', subcat: 'acapulco', showPrice: true, active: true },
   { id: 3,   name: 'Palito Bombon Americana x40',                   desc: 'Acapulco - Bañado en chocolate',        price: 20000, emoji: '🍫', cat: 'helados', subcat: 'acapulco', showPrice: true, active: true },
