@@ -1,5 +1,5 @@
 .hero {
-  background: var(--primary);
+  background: linear-gradient(135deg, #1B2E6B 0%, #C8282E 100%);
   padding: 24px 20px;
   position: relative;
   overflow: hidden;
@@ -9,25 +9,19 @@
 }
 .heroBg {
   position: absolute;
-  right: -20px;
+  right: -10px;
   top: 50%;
   transform: translateY(-50%);
-  height: 140px;
+  height: 150px;
   width: auto;
-  opacity: 0.08;
+  opacity: 0.12;
   pointer-events: none;
-  filter: brightness(10);
 }
 .heroContent {
   position: relative;
   z-index: 1;
 }
-.hero::before {
-  content: '❄';
-  position: absolute; right: -10px; top: -10px;
-  font-size: 130px; opacity: 0.05; transform: rotate(15deg);
-  pointer-events: none;
-}
+
 .hero h1 {
   font-family: var(--font-display);
   color: #fff; font-size: 26px; font-weight: 800;
