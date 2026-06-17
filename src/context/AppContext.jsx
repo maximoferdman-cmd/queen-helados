@@ -85,6 +85,11 @@ export function AppProvider({ children }) {
     setCategories(categories.filter(c => c.id !== id))
   }
 
+ function getSubcategories(catId) {
+    const cat = categories.find(c => c.id === catId)
+    return cat?.subcategories || []
+  }
+
   return (
     <AppContext.Provider value={{
       products, categories, config, cart,
@@ -92,11 +97,9 @@ export function AppProvider({ children }) {
       setItemQty, getItemQty, removeFromCart, clearCart, buildWhatsAppUrl,
       addProduct, updateProduct, deleteProduct,
       addCategory, deleteCategory,
-      setConfig,
+      setConfig, getSubcategories,
     }}>
       {children}
     </AppContext.Provider>
   )
-}
-
 export const useApp = () => useContext(AppContext)
