@@ -35,7 +35,6 @@ export default function Catalog() {
     <div>
       {/* Hero */}
       <div className={styles.hero}>
-        <img src="/logo.png" alt="" className={styles.heroBg} />
         <div className={styles.heroContent}>
           <h1>{config.businessName}</h1>
           <p>{config.tagline}</p>
