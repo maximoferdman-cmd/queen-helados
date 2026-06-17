@@ -8,6 +8,7 @@ export default function Catalog() {
   const [activeCat, setActiveCat] = useState('todas')
   const [activeSubcat, setActiveSubcat] = useState(null)
   const [search, setSearch] = useState('')
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const handleCatClick = (catId) => {
     setActiveCat(catId)
@@ -58,42 +59,37 @@ export default function Catalog() {
         </div>
       </div>
 
-      {/* Category pills */}
-      <p className={styles.sectionTitle}>Categorías</p>
-      <div style={{position:'relative', display:'flex', alignItems:'center'}}>
+      {/* Category menu */}
+      <div className={styles.catMenuWrap}>
         <button
-          className={styles.scrollBtn}
-          onClick={() => {
-            const el = document.getElementById('catScroll')
-            if(el.scrollLeft > 0) el.scrollBy({left: -150, behavior: 'smooth'})
-          }}
-        >‹</button>
-        <div className={styles.catScroll} id="catScroll">
-          <button
-            className={`${styles.pill} ${activeCat === 'todas' ? styles.activePill : ''}`}
-            onClick={() => handleCatClick('todas')}
-          >
-            🌟 Todas
-          </button>
-          {categories.map(c => (
-            <button
-              key={c.id}
-              className={`${styles.pill} ${activeCat === c.id ? styles.activePill : ''}`}
-              onClick={() => handleCatClick(c.id)}
-            >
-              {c.emoji} {c.name}
-            </button>
-          ))}
-        </div>
-        <button
-          className={styles.scrollBtn}
-          onClick={() => {
-            const el = document.getElementById('catScroll')
-            if(el.scrollLeft < el.scrollWidth - el.clientWidth) el.scrollBy({left: 150, behavior: 'smooth'})
-          }}
-        >›</button>
-      </div>
+          className={styles.catMenuBtn}
+          onClick={() => setMenuOpen(prev => !prev)}
+        >
+          <span>☰ Categorías</span>
+          <span className={styles.catMenuActive}>{activeCat === 'todas' ? 'Todas' : categories.find(c => c.id === activeCat)?.name}</span>
+          <span>{menuOpen ? '▲' : '▼'}</span>
+        </button>
 
+        {menuOpen && (
+          <div className={styles.catMenuDropdown}>
+            <button
+              className={`${styles.catMenuItem} ${activeCat === 'todas' ? styles.catMenuItemActive : ''}`}
+              onClick={() => { handleCatClick('todas'); setMenuOpen(false) }}
+            >
+              🌟 Todas las categorías
+            </button>
+            {categories.map(c => (
+              <button
+                key={c.id}
+                className={`${styles.catMenuItem} ${activeCat === c.id ? styles.catMenuItemActive : ''}`}
+                onClick={() => { handleCatClick(c.id); setMenuOpen(false) }}
+              >
+                {c.emoji} {c.name}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
       {/* Subcategory pills — solo aparecen si la categoría tiene subcategorías */}
       {currentSubcats.length > 0 && (
         <div className={styles.subcatScroll}>
