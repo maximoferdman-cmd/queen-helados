@@ -3,6 +3,24 @@
   padding: 24px 20px;
   position: relative;
   overflow: hidden;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+}
+.heroBg {
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 140px;
+  width: auto;
+  opacity: 0.08;
+  pointer-events: none;
+  filter: brightness(10);
+}
+.heroContent {
+  position: relative;
+  z-index: 1;
 }
 .hero::before {
   content: '❄';
