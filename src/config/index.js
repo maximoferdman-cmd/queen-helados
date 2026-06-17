@@ -7,7 +7,7 @@
 // ------ INFORMACIÓN DEL NEGOCIO ------
 export const BUSINESS = {
   name: "FríoMax",           // Nombre que aparece en el header
-  tagline: "Tu distribuidora de confianza",
+  tagline: "Queen Helados Bernal",
   description: "Helados, snacks y más · Pedinos y coordinamos la entrega",
   whatsappNumber: "5491155550000",  // SIN el + → formato: 549 + área + número
   greeting: "Hola! Quiero hacer el siguiente pedido:",

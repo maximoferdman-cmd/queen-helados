@@ -10,14 +10,14 @@ const [clientAddress, setClientAddress] = useState('')
   if (!open) return null
 
 function handleSend() {
-    if (cart.length === 0) return alert('Tu pedido está vacío')
-    const url = buildWhatsAppUrl(clientName, clientAddress)
-    window.open(url, '_blank')
-    clearCart()
-    setClientName('')
-setClientAddress('')
-    onClose()
-  }
+  if (cart.length === 0) return alert('Tu pedido está vacío')
+  const url = buildWhatsAppUrl(clientName, clientAddress)
+  window.open(url, '_blank')
+  clearCart()
+  setClientName('')
+  setClientAddress('')   // ← tiene que estar ADENTRO, con el mismo sangrado
+  onClose()
+}
   return (
     <div className={styles.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
       <div className={styles.sheet}>
