@@ -16,7 +16,9 @@ export default function Header({ onCartOpen, onAdminOpen }) {
           <span>{cartCount}</span>
           {cartCount > 0 && <span className={styles.badge}>{cartCount}</span>}
         </button>
-        <button className={styles.adminBtn} onClick={onAdminOpen}>⚙</button>
+       {import.meta.env.DEV && (
+  <button className={styles.adminBtn} onClick={onAdminOpen}>⚙</button>
+)}
       </div>
     </header>
   )

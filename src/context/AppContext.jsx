@@ -51,13 +51,14 @@ export function AppProvider({ children }) {
 
   function clearCart() { setCart([]) }
 
-  function buildWhatsAppUrl(clientName) {
-    let msg = config.greeting + '\n\n'
-    cart.forEach(item => { msg += `• ${item.qty} ${item.name}\n` })
-    if (clientName) msg += `\nNombre: ${clientName}`
-    msg += '\n\n' + config.farewell
-    return `https://wa.me/${config.waNumber}?text=${encodeURIComponent(msg)}`
-  }
+  function buildWhatsAppUrl(clientName, clientAddress) {
+  let msg = config.greeting + '\n\n'
+  cart.forEach(item => { msg += `• ${item.qty} ${item.name}\n` })
+  if (clientName) msg += `\nNombre: ${clientName}`
+  if (clientAddress) msg += `\nDirección: ${clientAddress}`
+  msg += '\n\n' + config.farewell
+  return `https://wa.me/${config.waNumber}?text=${encodeURIComponent(msg)}`
+}
 
   // --- Product helpers ---
   function addProduct(product) {

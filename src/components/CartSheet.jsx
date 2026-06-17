@@ -5,15 +5,17 @@ import styles from './CartSheet.module.css'
 export default function CartSheet({ open, onClose }) {
   const { cart, cartTotal, hasPrice, config, removeFromCart, clearCart, buildWhatsAppUrl } = useApp()
   const [clientName, setClientName] = useState('')
+const [clientAddress, setClientAddress] = useState('')
 
   if (!open) return null
 
 function handleSend() {
     if (cart.length === 0) return alert('Tu pedido está vacío')
-    const url = buildWhatsAppUrl(clientName)
+    const url = buildWhatsAppUrl(clientName, clientAddress)
     window.open(url, '_blank')
     clearCart()
     setClientName('')
+setClientAddress('')
     onClose()
   }
   return (
@@ -59,15 +61,15 @@ function handleSend() {
         )}
 
         <div className={styles.field}>
-          <label className={styles.fieldLabel}>Tu nombre (opcional)</label>
-          <input
-            className={styles.fieldInput}
-            type="text"
-            placeholder="Ej: Juan García"
-            value={clientName}
-            onChange={e => setClientName(e.target.value)}
-          />
-        </div>
+  <label className={styles.fieldLabel}>Tu dirección (para confirmar cobertura)</label>
+  <input
+    className={styles.fieldInput}
+    type="text"
+    placeholder="Ej: Rivadavia 1234, Bernal"
+    value={clientAddress}
+    onChange={e => setClientAddress(e.target.value)}
+  />
+</div>
 
         <button className={styles.waBtn} onClick={handleSend}>
           <span>💬</span> Enviar por WhatsApp
