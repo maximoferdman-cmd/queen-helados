@@ -102,4 +102,5 @@ export function AppProvider({ children }) {
       {children}
     </AppContext.Provider>
   )
+}
 export const useApp = () => useContext(AppContext)
