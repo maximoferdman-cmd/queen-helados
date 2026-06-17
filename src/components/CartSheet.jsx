@@ -5,7 +5,7 @@ import styles from './CartSheet.module.css'
 export default function CartSheet({ open, onClose }) {
   const { cart, cartTotal, hasPrice, config, removeFromCart, clearCart, buildWhatsAppUrl } = useApp()
   const [clientName, setClientName] = useState('')
-const [clientAddress, setClientAddress] = useState('')
+  const [clientAddress, setClientAddress] = useState('')
 
   if (!open) return null
 
