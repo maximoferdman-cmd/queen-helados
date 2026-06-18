@@ -8,7 +8,6 @@ export default function Catalog() {
   const [activeCat, setActiveCat] = useState('todas')
   const [activeSubcat, setActiveSubcat] = useState(null)
   const [search, setSearch] = useState('')
-  const [menuOpen, setMenuOpen] = useState(false)
 
   const handleCatClick = (catId) => {
     setActiveCat(catId)
@@ -28,68 +27,44 @@ export default function Catalog() {
   })
 
   const visibleCats = activeCat === 'todas'
-    ? categories.filter(c => filtered.some(p => p.cat === c.id))
+    ? categories.filter(c => products.some(p => p.active && p.cat === c.id))
     : categories.filter(c => c.id === activeCat)
 
   return (
-    <div>
-      {/* Hero */}
-      <div className={styles.hero}>
-        <div className={styles.heroContent}>
-          <h1>{config.businessName}</h1>
-          <p>{config.tagline}</p>
-          <div className={styles.chips}>
-            <span className={styles.chip}>🚚 Envío a domicilio</span>
-          </div>
-        </div>
-      </div>
+    <div id="catalogo">
 
-      {/* Search */}
+      {/* Buscador */}
       <div className={styles.searchWrap}>
-        <div className={styles.searchBox}>
-          <span>🔍</span>
-          <input
-            type="text"
-            placeholder="Buscar productos..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-          {search && <button className={styles.clearSearch} onClick={() => setSearch('')}>✕</button>}
-        </div>
+        <span className={styles.searchIcon}>🔍</span>
+        <input
+          className={styles.searchInput}
+          type="text"
+          placeholder="Buscar productos..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
       </div>
 
-      {/* Category menu */}
-      <div className={styles.catMenuWrap}>
+      {/* Pills de categorías — reemplaza el dropdown */}
+      <div className={styles.pillsWrap}>
         <button
-          className={styles.catMenuBtn}
-          onClick={() => setMenuOpen(prev => !prev)}
+          className={`${styles.pill} ${activeCat === 'todas' ? styles.pillActive : ''}`}
+          onClick={() => handleCatClick('todas')}
         >
-          <span>☰ Categorías</span>
-          <span className={styles.catMenuActive}>{activeCat === 'todas' ? 'Todas' : categories.find(c => c.id === activeCat)?.name}</span>
-          <span>{menuOpen ? '▲' : '▼'}</span>
+          🌟 Todas
         </button>
-
-        {menuOpen && (
-          <div className={styles.catMenuDropdown}>
-            <button
-              className={`${styles.catMenuItem} ${activeCat === 'todas' ? styles.catMenuItemActive : ''}`}
-              onClick={() => { handleCatClick('todas'); setMenuOpen(false) }}
-            >
-              🌟 Todas las categorías
-            </button>
-            {categories.map(c => (
-              <button
-                key={c.id}
-                className={`${styles.catMenuItem} ${activeCat === c.id ? styles.catMenuItemActive : ''}`}
-                onClick={() => { handleCatClick(c.id); setMenuOpen(false) }}
-              >
-                {c.emoji} {c.name}
-              </button>
-            ))}
-          </div>
-        )}
+        {categories.map(cat => (
+          <button
+            key={cat.id}
+            className={`${styles.pill} ${activeCat === cat.id ? styles.pillActive : ''}`}
+            onClick={() => handleCatClick(cat.id)}
+          >
+            {cat.emoji} {cat.name}
+          </button>
+        ))}
       </div>
-      {/* Subcategory pills — solo aparecen si la categoría tiene subcategorías */}
+
+      {/* Subcategorías si existen */}
       {currentSubcats.length > 0 && (
         <div className={styles.subcatScroll}>
           <button
@@ -110,13 +85,12 @@ export default function Catalog() {
         </div>
       )}
 
-      {/* Products by category */}
-      <div className={styles.products}>
+      {/* Productos */}
+      <div className={styles.catalog}>
         {visibleCats.map(cat => {
           const catProds = filtered.filter(p => p.cat === cat.id)
           if (catProds.length === 0) return null
 
-          // Si tiene subcategorías y no hay subcat activa, agrupar por subcat
           const subcats = getSubcategories(cat.id)
           if (subcats.length > 0 && !activeSubcat && activeCat !== 'todas') {
             return (
@@ -126,7 +100,9 @@ export default function Catalog() {
                   if (scProds.length === 0) return null
                   return (
                     <div key={sc.id} className={styles.subcatSection}>
-                      <h3 className={styles.subcatTitle}><span>{sc.emoji}</span>{sc.name}</h3>
+                      <h3 className={styles.subcatTitle}>
+                        <span>{sc.emoji}</span>{sc.name}
+                      </h3>
                       <div className={styles.grid}>
                         {scProds.map(p => <ProductCard key={p.id} product={p} />)}
                       </div>
@@ -139,13 +115,16 @@ export default function Catalog() {
 
           return (
             <div key={cat.id} className={styles.catSection}>
-              <h2 className={styles.catTitle}><span>{cat.emoji}</span>{cat.name}</h2>
+              <h2 className={styles.catTitle}>
+                <span>{cat.emoji}</span>{cat.name}
+              </h2>
               <div className={styles.grid}>
                 {catProds.map(p => <ProductCard key={p.id} product={p} />)}
               </div>
             </div>
           )
         })}
+
         {filtered.length === 0 && (
           <div className={styles.empty}>
             <span>🔍</span>

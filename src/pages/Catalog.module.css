@@ -209,3 +209,41 @@
   color: var(--primary);
   font-weight: 700;
 }
+/* ── Pills de categorías horizontales ── */
+.pillsWrap {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 12px 16px 4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.pillsWrap::-webkit-scrollbar { display: none; }
+
+.pill {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 16px;
+  border-radius: 50px;
+  border: 1.5px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.8);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.pill:hover {
+  background: rgba(255,255,255,0.14);
+  border-color: rgba(255,255,255,0.35);
+}
+.pillActive {
+  background: #FFD700 !important;
+  border-color: #FFD700 !important;
+  color: #111 !important;
+  font-weight: 700;
+}
