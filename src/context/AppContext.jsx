@@ -50,6 +50,23 @@ export function AppProvider({ children }) {
   }
 
   function clearCart() { setCart([]) }
+  function addPromoToCart(promo, selections) {
+  const id = `promo_${promo.id}_${Date.now()}`
+  const variantDesc = promo.items
+    .filter(item => item.variants)
+    .map(item => `${item.name}: ${selections[item.id]}`)
+    .join(' · ')
+  setCart(prev => [...prev, {
+    id,
+    name: promo.name,
+    emoji: '🎁',
+    price: promo.price,
+    showPrice: true,
+    qty: 1,
+    isPromo: true,
+    variantDesc,
+  }])
+}
 
   function buildWhatsAppUrl(clientName, clientAddress) {
   let msg = config.greeting + '\n\n'
@@ -99,6 +116,7 @@ export function AppProvider({ children }) {
       addProduct, updateProduct, deleteProduct,
       addCategory, deleteCategory,
       setConfig, getSubcategories,
+      addPromoToCart,
     }}>
       {children}
     </AppContext.Provider>
