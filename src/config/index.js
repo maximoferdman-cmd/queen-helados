@@ -76,8 +76,6 @@ export const INITIAL_CATEGORIES = [
   { id: "mccain",        name: "McCain",         emoji: "🍟", color: "#FFFBE8" },
   { id: "alfajores",     name: "Alfajores",      emoji: "🍫", color: "#F8F0E8" },
   { id: "fideos",        name: "Fideos",         emoji: "🍝", color: "#FFF8E8" },
-  { id: "bebidas",       name: "Bebidas",        emoji: "🥤", color: "#E8F4FF" },
-  { id: "congelados",    name: "Congelados",     emoji: "🧊", color: "#EAF7FF" },
 ];
 
 // ------ PRODUCTOS INICIALES ------
