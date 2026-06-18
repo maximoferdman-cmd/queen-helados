@@ -5,7 +5,6 @@ import Catalog from './pages/Catalog'
 import CartSheet from './components/CartSheet'
 import AdminSheet from './components/AdminSheet'
 import styles from './App.module.css'
-import Hero from './components/Hero'
 
 function AppContent() {
   const [cartOpen, setCartOpen] = useState(false)
@@ -18,7 +17,6 @@ function AppContent() {
   onCartOpen={() => setCartOpen(true)}
   onAdminOpen={() => setAdminOpen(true)}
 />
-<Hero />        {/* ← agregar esta línea */}
 <Catalog />
 
      {/* Botón flotante WhatsApp */}

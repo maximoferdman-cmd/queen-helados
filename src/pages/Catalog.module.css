@@ -6,16 +6,7 @@
   display: flex;
   align-items: center;
 }
-.heroBg {
-  position: absolute;
-  right: -10px;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 150px;
-  width: auto;
-  opacity: 0.12;
-  pointer-events: none;
-}
+.heroBg { display: none; }
 .heroContent {
   position: relative;
   z-index: 1;
