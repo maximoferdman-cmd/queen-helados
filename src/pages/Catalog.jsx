@@ -45,24 +45,40 @@ export default function Catalog() {
         />
       </div>
 
-      {/* Pills de categorías — reemplaza el dropdown */}
-      <div className={styles.pillsWrap}>
-        <button
-          className={`${styles.pill} ${activeCat === 'todas' ? styles.pillActive : ''}`}
-          onClick={() => handleCatClick('todas')}
-        >
-          🌟 Todas
-        </button>
-        {categories.map(cat => (
-          <button
-            key={cat.id}
-            className={`${styles.pill} ${activeCat === cat.id ? styles.pillActive : ''}`}
-            onClick={() => handleCatClick(cat.id)}
-          >
-            {cat.emoji} {cat.name}
-          </button>
-        ))}
-      </div>
+     {/* Pills de categorías con flechitas */}
+<div className={styles.pillsOuter}>
+  <button
+    className={styles.pillArrow}
+    onClick={() => {
+      document.getElementById('pills-scroll').scrollBy({ left: -150, behavior: 'smooth' })
+    }}
+  >‹</button>
+
+  <div id="pills-scroll" className={styles.pillsWrap}>
+    <button
+      className={`${styles.pill} ${activeCat === 'todas' ? styles.pillActive : ''}`}
+      onClick={() => handleCatClick('todas')}
+    >
+      🌟 Todas
+    </button>
+    {categories.map(cat => (
+      <button
+        key={cat.id}
+        className={`${styles.pill} ${activeCat === cat.id ? styles.pillActive : ''}`}
+        onClick={() => handleCatClick(cat.id)}
+      >
+        {cat.emoji} {cat.name}
+      </button>
+    ))}
+  </div>
+
+  <button
+    className={styles.pillArrow}
+    onClick={() => {
+      document.getElementById('pills-scroll').scrollBy({ left: 150, behavior: 'smooth' })
+    }}
+  >›</button>
+</div>
 
       {/* Subcategorías si existen */}
       {currentSubcats.length > 0 && (
