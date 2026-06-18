@@ -1,24 +1,23 @@
 import React from 'react'
-import { Truck, Zap, ShoppingCart } from 'lucide-react'
+import { Truck, Zap } from 'lucide-react'
 import { BUSINESS } from '../config'
 import styles from './Hero.module.css'
 
-export default function Hero({ onCartOpen }) {
+export default function Hero() {
   return (
-    <div style={styles.hero}>
-      {/* Decoración de fondo */}
-      <div style={styles.decoBig}>🍦</div>
-      <div style={styles.decoSmall}>🧊</div>
+    <div className={styles.hero}>
+      <div className={styles.decoBig}>🍦</div>
+      <div className={styles.decoSmall}>🧊</div>
 
-      <div style={styles.heroContent}>
-        <h1 style={styles.title}>
-          {BUSINESS.tagline} <span style={styles.wave}>👑</span>
+      <div className={styles.heroContent}>
+        <h1 className={styles.title}>
+          {BUSINESS.tagline} <span className={styles.wave}>👑</span>
         </h1>
-        <p style={styles.desc}>{BUSINESS.description}</p>
+        <p className={styles.desc}>{BUSINESS.description}</p>
 
-        <div style={styles.chips}>
+        <div className={styles.chips}>
           <Chip icon={<Truck size={13} />} label="Delivery sin cargo en tu zona" />
-          <Chip icon={<Zap size={13} />}  label="Pedidos al instante" />
+          <Chip icon={<Zap size={13} />} label="Pedidos al instante" />
           <Chip emoji="⭐" label="Siempre fresco" />
         </div>
 
@@ -49,17 +48,7 @@ export default function Hero({ onCartOpen }) {
 
 function Chip({ icon, emoji, label }) {
   return (
-    <div style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: '5px',
-      background: 'rgba(255,255,255,0.12)',
-      border: '1px solid rgba(255,255,255,0.2)',
-      borderRadius: '50px',
-      padding: '5px 12px',
-      fontSize: '12px',
-      color: 'rgba(255,255,255,0.9)',
-    }}>
+    <div className={styles.chip}>
       {icon || emoji} {label}
     </div>
   )

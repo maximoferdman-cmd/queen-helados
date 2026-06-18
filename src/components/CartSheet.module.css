@@ -55,7 +55,7 @@
 .itemSub { font-size: 12px; color: var(--text2); margin-top: 2px; }
 .itemPrice {
   font-family: var(--font-display);
-  font-size: 14px; font-weight: 700; color: var(--primary);
+  font-size: 14px; font-weight: 700; color: #FFD700;;
 }
 .delBtn {
   background: none; border: none; cursor: pointer;
@@ -69,7 +69,7 @@
 .totalLabel { font-size: 14px; color: var(--text2); }
 .totalVal {
   font-family: var(--font-display); font-size: 22px;
-  font-weight: 800; color: var(--primary);
+  font-weight: 800; color: #FFD700;
 }
 .field { margin-bottom: 16px; }
 .fieldLabel { font-size: 13px; font-weight: 600; color: var(--text2); display: block; margin-bottom: 6px; }
