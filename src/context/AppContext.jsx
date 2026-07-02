@@ -31,15 +31,23 @@ export function AppProvider({ children }) {
   const hasPrice    = cart.some(c => c.showPrice)
 
   function setItemQty(productId, qty) {
-    const product = products.find(p => p.id === productId)
-    if (!product) return
-    setCart(prev => {
-      const exists = prev.find(c => c.id === productId)
-      if (qty <= 0) return prev.filter(c => c.id !== productId)
-      if (exists)   return prev.map(c => c.id === productId ? { ...c, qty } : c)
-      return [...prev, { id: productId, name: product.name, emoji: product.emoji, price: product.price, showPrice: product.showPrice, qty }]
-    })
+  const product = products.find(p => p.id === productId)
+  if (!product) return
+  
+  const getPrice = (q) => {
+    if (product.priceWholesale && product.wholesaleMin && q >= product.wholesaleMin) {
+      return product.priceWholesale
+    }
+    return product.price
   }
+
+  setCart(prev => {
+    const exists = prev.find(c => c.id === productId)
+    if (qty <= 0) return prev.filter(c => c.id !== productId)
+    if (exists) return prev.map(c => c.id === productId ? { ...c, qty, price: getPrice(qty) } : c)
+    return [...prev, { id: productId, name: product.name, emoji: product.emoji, price: getPrice(qty), showPrice: product.showPrice, qty }]
+  })
+}
 
   function getItemQty(productId) {
     return cart.find(c => c.id === productId)?.qty || 0

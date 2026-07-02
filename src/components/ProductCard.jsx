@@ -8,6 +8,12 @@ export default function ProductCard({ product }) {
   const inc = () => setItemQty(product.id, qty + 1)
   const dec = () => setItemQty(product.id, Math.max(0, qty - 1))
 
+  // Precio dinámico según cantidad
+  const hasWholesale = product.priceWholesale && product.wholesaleMin
+  const currentPrice = hasWholesale && qty >= product.wholesaleMin
+    ? product.priceWholesale
+    : product.price
+
   return (
     <div className={styles.card}>
       <div className={styles.imgWrap}>
@@ -20,7 +26,17 @@ export default function ProductCard({ product }) {
         <p className={styles.name}>{product.name}</p>
         {product.desc && <p className={styles.desc}>{product.desc}</p>}
         {product.showPrice && (
-          <p className={styles.price}>${product.price.toLocaleString('es-AR')}</p>
+          <div>
+            <p className={styles.price}>${currentPrice.toLocaleString('es-AR')}</p>
+            {hasWholesale && (
+              <p className={styles.wholesaleTag}>
+                {qty >= product.wholesaleMin
+                  ? '✅ Precio mayorista aplicado'
+                  : `💡 x${product.wholesaleMin}+ → $${product.priceWholesale.toLocaleString('es-AR')}`
+                }
+              </p>
+            )}
+          </div>
         )}
         <div className={styles.qtyRow}>
           <button className={styles.qtyBtn} onClick={dec} aria-label="Quitar">−</button>

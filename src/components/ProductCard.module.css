@@ -88,3 +88,10 @@
 }
 .addBtn:hover { background: var(--primary-light); }
 .added { background: #2da86b; }
+.wholesaleTag {
+  font-size: 10px;
+  color: var(--badge);
+  font-weight: 600;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
