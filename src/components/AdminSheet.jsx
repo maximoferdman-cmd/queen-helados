@@ -17,6 +17,9 @@ export default function AdminSheet({ open, onClose }) {
   const [cfgForm, setCfgForm] = useState({ ...config })
   const [loginForm, setLoginForm] = useState({ email: '', password: '' })
   const [loginError, setLoginError] = useState('')
+  const [search, setSearch] = useState('')
+  const [editingId, setEditingId] = useState(null)
+  const [editForm, setEditForm] = useState(null)
 
   if (!open) return null
 
@@ -36,6 +39,30 @@ export default function AdminSheet({ open, onClose }) {
     setTab(0)
   }
 
+  function startEdit(p) {
+    setEditingId(p.id)
+    setEditForm({
+      name: p.name,
+      desc: p.desc || '',
+      price: p.price,
+      emoji: p.emoji || '',
+      cat: p.cat,
+      showPrice: p.showPrice,
+    })
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
+    setEditForm(null)
+  }
+
+  function saveEdit(id) {
+    if (!editForm.name.trim()) return alert('Ingresá el nombre')
+    updateProduct(id, { ...editForm, price: parseFloat(editForm.price) || 0 })
+    setEditingId(null)
+    setEditForm(null)
+  }
+
   async function handleAddCat() {
     if (!catForm.name.trim()) return alert('Ingresá el nombre')
     const id = catForm.name.toLowerCase().replace(/\s+/g, '-')
@@ -48,6 +75,10 @@ export default function AdminSheet({ open, onClose }) {
     setConfig({ ...config, ...cfgForm })
     alert('✅ Configuración guardada')
   }
+
+  const filteredProducts = search.trim()
+    ? products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
+    : products
 
   // --- Pantalla de login si no está autenticado ---
   if (!user) {
@@ -98,20 +129,64 @@ export default function AdminSheet({ open, onClose }) {
 
         {/* PRODUCTOS */}
         {tab === 0 && (
-          <div className={styles.list}>
-            {products.map(p => (
-              <div key={p.id} className={styles.pItem}>
-                <span className={styles.pEmoji}>{p.emoji || '📦'}</span>
-                <div className={styles.pInfo}>
-                  <p className={styles.pName}>{p.name}</p>
-                  <p className={styles.pMeta}>{categories.find(c => c.id === p.cat)?.name || p.cat} · {p.showPrice ? '$' + p.price.toLocaleString('es-AR') : 'Sin precio'}</p>
-                </div>
-                <div className={styles.pActions}>
-                  <button className={`${styles.miniBtn} ${p.active ? styles.on : ''}`} onClick={() => updateProduct(p.id, { active: !p.active })}>{p.active ? '✓ Activo' : 'Inactivo'}</button>
-                  <button className={`${styles.miniBtn} ${styles.del}`} onClick={() => { if (window.confirm('¿Eliminar?')) deleteProduct(p.id) }}>🗑</button>
-                </div>
-              </div>
-            ))}
+          <div>
+            <input
+              className={styles.input}
+              placeholder="🔍 Buscar producto..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ marginBottom: 12 }}
+            />
+            <div className={styles.list}>
+              {filteredProducts.map(p => (
+                editingId === p.id ? (
+                  <div key={p.id} className={styles.pItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 8 }}>
+                    <label className={styles.label}>Nombre</label>
+                    <input className={styles.input} value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} />
+                    <label className={styles.label}>Descripción</label>
+                    <input className={styles.input} value={editForm.desc} onChange={e => setEditForm(f => ({ ...f, desc: e.target.value }))} />
+                    <div className={styles.row2}>
+                      <div>
+                        <label className={styles.label}>Precio ($)</label>
+                        <input className={styles.input} type="number" value={editForm.price} onChange={e => setEditForm(f => ({ ...f, price: e.target.value }))} />
+                      </div>
+                      <div>
+                        <label className={styles.label}>Emoji</label>
+                        <input className={styles.input} value={editForm.emoji} onChange={e => setEditForm(f => ({ ...f, emoji: e.target.value }))} />
+                      </div>
+                    </div>
+                    <label className={styles.label}>Categoría</label>
+                    <select className={styles.input} value={editForm.cat} onChange={e => setEditForm(f => ({ ...f, cat: e.target.value }))}>
+                      {categories.map(c => <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
+                    </select>
+                    <div className={styles.toggleRow}>
+                      <span className={styles.toggleLabel}>Mostrar precio</span>
+                      <label className={styles.toggle}><input type="checkbox" checked={editForm.showPrice} onChange={e => setEditForm(f => ({ ...f, showPrice: e.target.checked }))} /><span className={styles.slider} /></label>
+                    </div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button className={styles.saveBtn} style={{ flex: 1 }} onClick={() => saveEdit(p.id)}>Guardar ✓</button>
+                      <button className={styles.miniBtn} onClick={cancelEdit}>Cancelar</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div key={p.id} className={styles.pItem}>
+                    <span className={styles.pEmoji}>{p.emoji || '📦'}</span>
+                    <div className={styles.pInfo}>
+                      <p className={styles.pName}>{p.name}</p>
+                      <p className={styles.pMeta}>{categories.find(c => c.id === p.cat)?.name || p.cat} · {p.showPrice ? '$' + p.price.toLocaleString('es-AR') : 'Sin precio'}</p>
+                    </div>
+                    <div className={styles.pActions}>
+                      <button className={styles.miniBtn} onClick={() => startEdit(p)}>✏️ Editar</button>
+                      <button className={`${styles.miniBtn} ${p.active ? styles.on : ''}`} onClick={() => updateProduct(p.id, { active: !p.active })}>{p.active ? '✓ Activo' : 'Inactivo'}</button>
+                      <button className={`${styles.miniBtn} ${styles.del}`} onClick={() => { if (window.confirm('¿Eliminar?')) deleteProduct(p.id) }}>🗑</button>
+                    </div>
+                  </div>
+                )
+              ))}
+              {filteredProducts.length === 0 && (
+                <p className={styles.sub} style={{ textAlign: 'center', padding: 20 }}>No se encontraron productos</p>
+              )}
+            </div>
           </div>
         )}
 
