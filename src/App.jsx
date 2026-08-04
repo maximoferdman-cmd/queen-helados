@@ -9,7 +9,15 @@ import styles from './App.module.css'
 function AppContent() {
   const [cartOpen, setCartOpen] = useState(false)
   const [adminOpen, setAdminOpen] = useState(false)
-  const { cartCount } = useApp()
+  const { cartCount, loading } = useApp()
+
+  if (loading) {
+    return (
+      <div style={{ padding: 60, textAlign: 'center', fontFamily: 'inherit' }}>
+        Cargando catálogo...
+      </div>
+    )
+  }
 
   return (
     <div className="app-wrapper">

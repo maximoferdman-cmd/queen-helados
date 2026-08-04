@@ -5,13 +5,29 @@ import styles from './AdminSheet.module.css'
 const TABS = ['Productos', 'Nuevo', 'Categorías', 'Config']
 
 export default function AdminSheet({ open, onClose }) {
-  const { products, categories, config, addProduct, updateProduct, deleteProduct, addCategory, deleteCategory, setConfig } = useApp()
+  const {
+    products, categories, config,
+    addProduct, updateProduct, deleteProduct,
+    addCategory, deleteCategory, setConfig,
+    user, login, logout,
+  } = useApp()
   const [tab, setTab] = useState(0)
   const [form, setForm] = useState({ name: '', desc: '', price: '', emoji: '', cat: '', showPrice: true, active: true })
   const [catForm, setCatForm] = useState({ emoji: '', name: '' })
   const [cfgForm, setCfgForm] = useState({ ...config })
+  const [loginForm, setLoginForm] = useState({ email: '', password: '' })
+  const [loginError, setLoginError] = useState('')
 
   if (!open) return null
+
+  async function handleLogin() {
+    setLoginError('')
+    try {
+      await login(loginForm.email, loginForm.password)
+    } catch (e) {
+      setLoginError('Email o contraseña incorrectos')
+    }
+  }
 
   function handleAddProduct() {
     if (!form.name.trim()) return alert('Ingresá el nombre')
@@ -20,17 +36,49 @@ export default function AdminSheet({ open, onClose }) {
     setTab(0)
   }
 
-  function handleAddCat() {
+  async function handleAddCat() {
     if (!catForm.name.trim()) return alert('Ingresá el nombre')
     const id = catForm.name.toLowerCase().replace(/\s+/g, '-')
-    const ok = addCategory({ id, name: catForm.name, emoji: catForm.emoji || '📁' })
+    const ok = await addCategory({ id, name: catForm.name, emoji: catForm.emoji || '📁' })
     if (!ok) return alert('Ya existe una categoría con ese nombre')
     setCatForm({ emoji: '', name: '' })
   }
 
   function handleSaveConfig() {
-    setConfig({ ...config, ...cfgForm, showTotals: cfgForm.showTotals })
+    setConfig({ ...config, ...cfgForm })
     alert('✅ Configuración guardada')
+  }
+
+  // --- Pantalla de login si no está autenticado ---
+  if (!user) {
+    return (
+      <div className={styles.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
+        <div className={styles.sheet}>
+          <div className={styles.handle} />
+          <button className={styles.closeBtn} onClick={onClose}>✕</button>
+          <h2 className={styles.title}>Panel Admin ⚙</h2>
+          <p className={styles.sub}>Iniciá sesión para gestionar el catálogo</p>
+
+          <label className={styles.label}>Email</label>
+          <input
+            className={styles.input}
+            type="email"
+            value={loginForm.email}
+            onChange={e => setLoginForm(f => ({ ...f, email: e.target.value }))}
+          />
+          <label className={styles.label}>Contraseña</label>
+          <input
+            className={styles.input}
+            type="password"
+            value={loginForm.password}
+            onChange={e => setLoginForm(f => ({ ...f, password: e.target.value }))}
+            onKeyDown={e => e.key === 'Enter' && handleLogin()}
+          />
+          {loginError && <p style={{ color: '#C8282E', fontSize: 13, marginTop: 6 }}>{loginError}</p>}
+          <button className={styles.saveBtn} onClick={handleLogin}>Ingresar</button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -40,6 +88,7 @@ export default function AdminSheet({ open, onClose }) {
         <button className={styles.closeBtn} onClick={onClose}>✕</button>
         <h2 className={styles.title}>Panel Admin ⚙</h2>
         <p className={styles.sub}>Gestioná tu catálogo</p>
+        <button className={styles.miniBtn} style={{ marginBottom: 12 }} onClick={logout}>Cerrar sesión</button>
 
         <div className={styles.tabs}>
           {TABS.map((t, i) => (
@@ -69,7 +118,7 @@ export default function AdminSheet({ open, onClose }) {
         {/* NUEVO */}
         {tab === 1 && (
           <div>
-            <div className={styles.notice}>💡 Los cambios se guardan en el dispositivo. Conectá Firebase para sincronizar en la nube.</div>
+            <div className={styles.notice}>💡 Los cambios se guardan en Firebase y se ven en todos los dispositivos, al instante.</div>
             <label className={styles.label}>Nombre *</label>
             <input className={styles.input} placeholder="Helado Frutilla x500ml" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
             <label className={styles.label}>Descripción</label>
