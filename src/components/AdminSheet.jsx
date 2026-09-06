@@ -15,7 +15,7 @@ export default function AdminSheet({ open, onClose }) {
     user, login, logout,
   } = useApp()
   const [tab, setTab] = useState(0)
-  const [form, setForm] = useState({ name: '', desc: '', price: '', emoji: '', cat: '', showPrice: true, active: true, bucketGroupId: '' })
+  const [form, setForm] = useState({ name: '', desc: '', price: '', emoji: '', image: '', cat: '', showPrice: true, active: true, bucketGroupId: '' })
   const [catForm, setCatForm] = useState({ emoji: '', name: '' })
   const [cfgForm, setCfgForm] = useState({ ...config })
   const [loginForm, setLoginForm] = useState({ email: '', password: '' })
@@ -46,7 +46,7 @@ export default function AdminSheet({ open, onClose }) {
       showPrice: true,
       cat: form.cat || categories[0]?.id,
     })
-    setForm({ name: '', desc: '', price: '', emoji: '', cat: '', showPrice: true, active: true, bucketGroupId: '' })
+    setForm({ name: '', desc: '', price: '', emoji: '', image: '', cat: '', showPrice: true, active: true, bucketGroupId: '' })
     setTab(0)
   }
 
@@ -57,6 +57,7 @@ export default function AdminSheet({ open, onClose }) {
       desc: p.desc || '',
       price: p.price,
       emoji: p.emoji || '',
+      image: p.image || '',
       cat: p.cat,
       showPrice: p.showPrice,
     })
@@ -166,6 +167,8 @@ export default function AdminSheet({ open, onClose }) {
                         <input className={styles.input} value={editForm.emoji} onChange={e => setEditForm(f => ({ ...f, emoji: e.target.value }))} />
                       </div>
                     </div>
+                    <label className={styles.label}>Imagen (ruta del archivo)</label>
+                    <input className={styles.input} placeholder="/balde-comunes.jpg" value={editForm.image} onChange={e => setEditForm(f => ({ ...f, image: e.target.value }))} />
                     <label className={styles.label}>Categoría</label>
                     <select className={styles.input} value={editForm.cat} onChange={e => setEditForm(f => ({ ...f, cat: e.target.value }))}>
                       {categories.map(c => <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
@@ -219,6 +222,9 @@ export default function AdminSheet({ open, onClose }) {
                 <input className={styles.input} placeholder="🍦" value={form.emoji} onChange={e => setForm(f => ({ ...f, emoji: e.target.value }))} />
               </div>
             </div>
+            <label className={styles.label}>Imagen (ruta del archivo)</label>
+            <input className={styles.input} placeholder="/balde-comunes.jpg" value={form.image} onChange={e => setForm(f => ({ ...f, image: e.target.value }))} />
+            <p className={styles.notice}>💡 Primero subí el archivo a la carpeta "public" del proyecto y hacé push. Después pegá acá el nombre, empezando con "/" (ej: /balde-comunes.jpg).</p>
             <label className={styles.label}>¿Es un balde 10L?</label>
             <select className={styles.input} value={form.bucketGroupId} onChange={e => setForm(f => ({ ...f, bucketGroupId: e.target.value }))}>
               <option value="">No, es un producto normal</option>
