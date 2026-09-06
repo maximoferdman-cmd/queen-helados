@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { promos } from '../data/promos'
 import { useApp } from '../context/AppContext'
 import styles from './PromoSheet.module.css'
@@ -8,14 +8,22 @@ export default function PromoSheet({ onClose }) {
   const [step, setStep] = useState('list') // 'list' | 'config'
   const [selectedPromo, setSelectedPromo] = useState(null)
   const [selections, setSelections] = useState({})
+  const sheetRef = useRef(null)
 
   const itemsWithVariants = selectedPromo?.items.filter(i => i.variants) || []
   const allSelected = itemsWithVariants.every(i => selections[i.id])
 
+  function goToStep(nextStep) {
+    setStep(nextStep)
+    requestAnimationFrame(() => {
+      sheetRef.current?.scrollTo({ top: 0, behavior: 'auto' })
+    })
+  }
+
   function handleSelectPromo(promo) {
     setSelectedPromo(promo)
     setSelections({})
-    setStep('config')
+    goToStep('config')
   }
 
   function handleVariant(itemId, variant) {
@@ -29,11 +37,11 @@ export default function PromoSheet({ onClose }) {
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.sheet} onClick={e => e.stopPropagation()}>
+      <div className={styles.sheet} ref={sheetRef} onClick={e => e.stopPropagation()}>
 
         <div className={styles.header}>
           {step === 'config' && (
-            <button className={styles.back} onClick={() => setStep('list')}>‹</button>
+            <button className={styles.back} onClick={() => goToStep('list')}>‹</button>
           )}
           <h2 className={styles.title}>
             {step === 'list' ? '🎁 Armá tu promo' : selectedPromo.name}

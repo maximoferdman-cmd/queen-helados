@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { bucketGroups } from '../data/buckets'
 import { useApp } from '../context/AppContext'
 import styles from './PromoSheet.module.css'
@@ -8,11 +8,21 @@ export default function BucketSheet({ onClose }) {
   const [step, setStep] = useState('groups') // 'groups' | 'flavor'
   const [selectedGroup, setSelectedGroup] = useState(null)
   const [flavor, setFlavor] = useState(null)
+  const sheetRef = useRef(null)
+
+  function goToStep(nextStep) {
+    setStep(nextStep)
+    // Volvemos el scroll del modal arriba al cambiar de paso,
+    // para que no quede "trabado" a mitad de una lista larga.
+    requestAnimationFrame(() => {
+      sheetRef.current?.scrollTo({ top: 0, behavior: 'auto' })
+    })
+  }
 
   function handleSelectGroup(group) {
     setSelectedGroup(group)
     setFlavor(null)
-    setStep('flavor')
+    goToStep('flavor')
   }
 
   function handleAddToCart() {
@@ -22,11 +32,11 @@ export default function BucketSheet({ onClose }) {
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.sheet} onClick={e => e.stopPropagation()}>
+      <div className={styles.sheet} ref={sheetRef} onClick={e => e.stopPropagation()}>
 
         <div className={styles.header}>
           {step === 'flavor' && (
-            <button className={styles.back} onClick={() => setStep('groups')}>‹</button>
+            <button className={styles.back} onClick={() => goToStep('groups')}>‹</button>
           )}
           <h2 className={styles.title}>
             {step === 'groups' ? '🪣 Balde 10L — Elegí el tipo' : `Elegí el sabor · ${selectedGroup.label}`}
