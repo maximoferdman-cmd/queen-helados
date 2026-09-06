@@ -112,7 +112,7 @@
 }
 
 .config {
-  padding: 16px 20px;
+  padding: 16px 20px 4px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -181,6 +181,31 @@
   border-color: var(--primary);
   color: #fff;
   font-weight: 700;
+}
+
+.variantOptionsCompact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.variantBtnCompact {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  transition: all 0.15s;
+  line-height: 1.25;
+}
+
+.variantBtnCompact:hover {
+  border-color: var(--primary);
 }
 
 .footer {

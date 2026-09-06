@@ -20,7 +20,8 @@ export default function ProductCard({ product }) {
 
   // --- Producto especial: balde 10L con sabor a elegir ---
   if (product.isBucket) {
-    const minPrice = Math.min(...bucketGroups.map(g => g.price))
+    const group = bucketGroups.find(g => g.id === product.bucketGroupId)
+    if (!group) return null
     return (
       <div className={styles.card}>
         <div className={styles.imgWrap}>
@@ -32,12 +33,12 @@ export default function ProductCard({ product }) {
         <div className={styles.info}>
           <p className={styles.name}>{product.name}</p>
           {product.desc && <p className={styles.desc}>{product.desc}</p>}
-          <p className={styles.price}>Desde ${minPrice.toLocaleString('es-AR')}</p>
+          <p className={styles.price}>${group.price.toLocaleString('es-AR')}</p>
           <button className={styles.addBtn} style={{ width: '100%' }} onClick={() => setBucketOpen(true)}>
             Elegir sabor 🍦
           </button>
         </div>
-        {bucketOpen && <BucketSheet onClose={() => setBucketOpen(false)} />}
+        {bucketOpen && <BucketSheet group={group} onClose={() => setBucketOpen(false)} />}
       </div>
     )
   }

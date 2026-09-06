@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
+import { bucketGroups } from '../data/buckets'
 import styles from './AdminSheet.module.css'
 
 const TABS = ['Productos', 'Nuevo', 'Categorías', 'Config']
@@ -14,7 +15,7 @@ export default function AdminSheet({ open, onClose }) {
     user, login, logout,
   } = useApp()
   const [tab, setTab] = useState(0)
-  const [form, setForm] = useState({ name: '', desc: '', price: '', emoji: '', cat: '', showPrice: true, active: true, isBucket: false })
+  const [form, setForm] = useState({ name: '', desc: '', price: '', emoji: '', cat: '', showPrice: true, active: true, bucketGroupId: '' })
   const [catForm, setCatForm] = useState({ emoji: '', name: '' })
   const [cfgForm, setCfgForm] = useState({ ...config })
   const [loginForm, setLoginForm] = useState({ email: '', password: '' })
@@ -36,8 +37,16 @@ export default function AdminSheet({ open, onClose }) {
 
   function handleAddProduct() {
     if (!form.name.trim()) return alert('Ingresá el nombre')
-    addProduct({ ...form, price: form.isBucket ? 0 : (parseFloat(form.price) || 0), cat: form.cat || categories[0]?.id })
-    setForm({ name: '', desc: '', price: '', emoji: '', cat: '', showPrice: true, active: true, isBucket: false })
+    const isBucket = !!form.bucketGroupId
+    const group = isBucket ? bucketGroups.find(g => g.id === form.bucketGroupId) : null
+    addProduct({
+      ...form,
+      isBucket,
+      price: isBucket ? group.price : (parseFloat(form.price) || 0),
+      showPrice: true,
+      cat: form.cat || categories[0]?.id,
+    })
+    setForm({ name: '', desc: '', price: '', emoji: '', cat: '', showPrice: true, active: true, bucketGroupId: '' })
     setTab(0)
   }
 
@@ -210,15 +219,22 @@ export default function AdminSheet({ open, onClose }) {
                 <input className={styles.input} placeholder="🍦" value={form.emoji} onChange={e => setForm(f => ({ ...f, emoji: e.target.value }))} />
               </div>
             </div>
+            <label className={styles.label}>¿Es un balde 10L?</label>
+            <select className={styles.input} value={form.bucketGroupId} onChange={e => setForm(f => ({ ...f, bucketGroupId: e.target.value }))}>
+              <option value="">No, es un producto normal</option>
+              {bucketGroups.map(g => (
+                <option key={g.id} value={g.id}>{g.label} (${g.price.toLocaleString('es-AR')})</option>
+              ))}
+            </select>
+            {form.bucketGroupId && (
+              <p className={styles.notice}>💡 El cliente va a poder elegir el sabor entre los {bucketGroups.find(g => g.id === form.bucketGroupId)?.flavors.length} de "{bucketGroups.find(g => g.id === form.bucketGroupId)?.label}". El precio se toma automático de ese tipo.</p>
+            )}
+
             <label className={styles.label}>Categoría</label>
             <select className={styles.input} value={form.cat} onChange={e => setForm(f => ({ ...f, cat: e.target.value }))}>
               {categories.map(c => <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
             </select>
-            <div className={styles.toggleRow}>
-              <span className={styles.toggleLabel}>Es un balde 10L (el cliente elige sabor y varía el precio)</span>
-              <label className={styles.toggle}><input type="checkbox" checked={form.isBucket} onChange={e => setForm(f => ({ ...f, isBucket: e.target.checked }))} /><span className={styles.slider} /></label>
-            </div>
-            {!form.isBucket && (
+            {!form.bucketGroupId && (
               <div className={styles.toggleRow}>
                 <span className={styles.toggleLabel}>Mostrar precio</span>
                 <label className={styles.toggle}><input type="checkbox" checked={form.showPrice} onChange={e => setForm(f => ({ ...f, showPrice: e.target.checked }))} /><span className={styles.slider} /></label>
