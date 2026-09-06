@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { bucketGroups } from '../data/buckets'
 import { useApp } from '../context/AppContext'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
@@ -32,7 +33,7 @@ export default function BucketSheet({ onClose }) {
     onClose()
   }
 
-  return (
+  return createPortal(
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.sheet} ref={sheetRef} onClick={e => e.stopPropagation()}>
 
@@ -97,6 +98,5 @@ export default function BucketSheet({ onClose }) {
         )}
 
       </div>
-    </div>
-  )
-}
+    </div>,
+    document.body
