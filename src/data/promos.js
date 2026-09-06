@@ -3,7 +3,7 @@ export const promos = [
     id: 1,
     name: "Promo 1",
     emoji: "🍦",
-    price: 38700,
+    price: 41800,
     items: [
       {
         id: "agua",
@@ -29,7 +29,7 @@ export const promos = [
     id: 2,
     name: "Promo 2",
     emoji: "🎁",
-    price: 65000,
+    price: 70000,
     items: [
       {
         id: "agua",
