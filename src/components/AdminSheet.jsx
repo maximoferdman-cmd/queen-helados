@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useApp } from '../context/AppContext'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import styles from './AdminSheet.module.css'
 
 const TABS = ['Productos', 'Nuevo', 'Categorías', 'Config']
 
 export default function AdminSheet({ open, onClose }) {
+  useLockBodyScroll(open)
   const {
     products, categories, config,
     addProduct, updateProduct, deleteProduct,

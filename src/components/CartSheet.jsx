@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useApp } from '../context/AppContext'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import styles from './CartSheet.module.css'
 
 export default function CartSheet({ open, onClose }) {
+  useLockBodyScroll(open)
   const { cart, cartTotal, hasPrice, config, removeFromCart, clearCart, buildWhatsAppUrl } = useApp()
   const [clientName, setClientName] = useState('')
   const [clientAddress, setClientAddress] = useState('')

@@ -1,9 +1,11 @@
 import { useState, useRef } from 'react'
 import { bucketGroups } from '../data/buckets'
 import { useApp } from '../context/AppContext'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import styles from './PromoSheet.module.css'
 
 export default function BucketSheet({ onClose }) {
+  useLockBodyScroll()
   const { addBucketToCart } = useApp()
   const [step, setStep] = useState('groups') // 'groups' | 'flavor'
   const [selectedGroup, setSelectedGroup] = useState(null)
