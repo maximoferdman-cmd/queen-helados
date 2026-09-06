@@ -12,7 +12,7 @@ export default function AdminSheet({ open, onClose }) {
     user, login, logout,
   } = useApp()
   const [tab, setTab] = useState(0)
-  const [form, setForm] = useState({ name: '', desc: '', price: '', emoji: '', cat: '', showPrice: true, active: true })
+  const [form, setForm] = useState({ name: '', desc: '', price: '', emoji: '', cat: '', showPrice: true, active: true, isBucket: false })
   const [catForm, setCatForm] = useState({ emoji: '', name: '' })
   const [cfgForm, setCfgForm] = useState({ ...config })
   const [loginForm, setLoginForm] = useState({ email: '', password: '' })
@@ -34,8 +34,8 @@ export default function AdminSheet({ open, onClose }) {
 
   function handleAddProduct() {
     if (!form.name.trim()) return alert('Ingresá el nombre')
-    addProduct({ ...form, price: parseFloat(form.price) || 0, cat: form.cat || categories[0]?.id })
-    setForm({ name: '', desc: '', price: '', emoji: '', cat: '', showPrice: true, active: true })
+    addProduct({ ...form, price: form.isBucket ? 0 : (parseFloat(form.price) || 0), cat: form.cat || categories[0]?.id })
+    setForm({ name: '', desc: '', price: '', emoji: '', cat: '', showPrice: true, active: true, isBucket: false })
     setTab(0)
   }
 
@@ -213,9 +213,15 @@ export default function AdminSheet({ open, onClose }) {
               {categories.map(c => <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
             </select>
             <div className={styles.toggleRow}>
-              <span className={styles.toggleLabel}>Mostrar precio</span>
-              <label className={styles.toggle}><input type="checkbox" checked={form.showPrice} onChange={e => setForm(f => ({ ...f, showPrice: e.target.checked }))} /><span className={styles.slider} /></label>
+              <span className={styles.toggleLabel}>Es un balde 10L (el cliente elige sabor y varía el precio)</span>
+              <label className={styles.toggle}><input type="checkbox" checked={form.isBucket} onChange={e => setForm(f => ({ ...f, isBucket: e.target.checked }))} /><span className={styles.slider} /></label>
             </div>
+            {!form.isBucket && (
+              <div className={styles.toggleRow}>
+                <span className={styles.toggleLabel}>Mostrar precio</span>
+                <label className={styles.toggle}><input type="checkbox" checked={form.showPrice} onChange={e => setForm(f => ({ ...f, showPrice: e.target.checked }))} /><span className={styles.slider} /></label>
+              </div>
+            )}
             <button className={styles.saveBtn} onClick={handleAddProduct}>Guardar Producto ✓</button>
           </div>
         )}

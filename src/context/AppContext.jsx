@@ -111,6 +111,19 @@ export function AppProvider({ children }) {
     }])
   }
 
+  function addBucketToCart(group, flavor) {
+    const id = `bucket_${group.id}_${Date.now()}`
+    setCart(prev => [...prev, {
+      id,
+      name: `Balde 10L ${group.label} - ${flavor}`,
+      emoji: '🪣',
+      price: group.price,
+      showPrice: true,
+      qty: 1,
+      isBucket: true,
+    }])
+  }
+
   function buildWhatsAppUrl(clientName, clientAddress) {
     let msg = config.greeting + '\n\n'
     cart.forEach(item => { msg += `• ${item.qty} ${item.name}\n` })
@@ -165,7 +178,7 @@ export function AppProvider({ children }) {
       addProduct, updateProduct, deleteProduct,
       addCategory, deleteCategory,
       setConfig, getSubcategories,
-      addPromoToCart, login, logout,
+      addPromoToCart, addBucketToCart, login, logout,
     }}>
       {children}
     </AppContext.Provider>
