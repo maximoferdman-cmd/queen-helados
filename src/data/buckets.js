@@ -4,8 +4,7 @@ export const bucketGroups = [
     label: 'Comunes',
     price: 27500,
     flavors: [
-      'Americana', 'Ananá', 'Coco', 'Crema del Cielo',
-      'Frutilla', 'Limón', 'Durazno', 'Vainilla',
+      'Americana', 'Ananá', 'Crema del Cielo', 'Limón', 'Durazno', 'Vainilla',
     ],
   },
   {
@@ -18,7 +17,7 @@ export const bucketGroups = [
       'Dulce Granizado', 'Dulce Relleno', 'Frutilla a la Crema',
       'Frutilla Granizada', 'Granizado', 'Mantecol', 'Frutilla Reina',
       'Menta Granizada', 'Flan', 'Bananita Dolca', 'Maracuyá',
-      'Frutos del Bosque', 'Naranja c/Frutilla', 'Vainilla Granizada',
+      'Frutos del Bosque', 'Naranja c/Frutilla',
     ],
   },
   {
