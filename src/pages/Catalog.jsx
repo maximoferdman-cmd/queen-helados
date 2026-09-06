@@ -45,16 +45,17 @@ export default function Catalog() {
             <span className={styles.heroChip}>🚚 Delivery sin cargo en tu zona</span>
           </div>
 
-   <div style={{ display: 'flex', gap: '10px', marginTop: '12px', flexWrap: 'wrap' }}>
+   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px' }}>
             <button
               className={styles.heroCta}
+              style={{ width: '100%', justifyContent: 'center' }}
               onClick={() => document.getElementById('catalogo-productos')?.scrollIntoView({ behavior: 'smooth' })}
             >
               🛒 Ver productos
             </button>
             <button
               className={styles.heroCta}
-              style={{ background: '#C8282E', color: '#fff' }}
+              style={{ width: '100%', justifyContent: 'center', background: '#C8282E', color: '#fff' }}
               onClick={() => setPromoOpen(true)}
             >
               🎁 Armá tu promo
@@ -63,21 +64,17 @@ export default function Catalog() {
               href={`https://wa.me/${config.waNumber}`}
               target="_blank"
               rel="noopener noreferrer"
+              className={styles.heroCta}
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
+                width: '100%',
+                justifyContent: 'center',
                 background: '#25D366',
                 color: '#fff',
-                borderRadius: '50px',
-                padding: '12px 20px',
-                fontSize: '15px',
-                fontWeight: '700',
                 textDecoration: 'none',
-                fontFamily: 'inherit',
+                boxSizing: 'border-box',
               }}
             >
-              Coordinar envío
+              Contactanos
             </a>
           </div>
         </div>
