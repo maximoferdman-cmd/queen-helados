@@ -115,7 +115,7 @@ export default function Catalog() {
               </button>
             ))}
             <button className={styles.pill} onClick={() => setCategoriesOpen(true)}>
-              ☰ Ver categorías
+              ☰ Categorías
             </button>
           </div>
         </div>
