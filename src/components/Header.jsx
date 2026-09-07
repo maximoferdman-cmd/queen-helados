@@ -12,7 +12,6 @@ export default function Header({ onCartOpen, onAdminOpen }) {
       <div className={styles.right}>
         <button className={styles.cartBtn} onClick={onCartOpen} aria-label="Ver carrito">
           🛒
-          <span>{cartCount}</span>
           {cartCount > 0 && <span className={styles.badge}>{cartCount}</span>}
         </button>
         <button className={styles.adminBtn} onClick={onAdminOpen}>⚙</button>

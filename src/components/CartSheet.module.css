@@ -95,3 +95,58 @@
   transition: all 0.2s;
 }
 .clearBtn:hover { border-color: var(--danger); color: var(--danger); }
+
+.itemQtyRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.itemQtyBtn {
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.itemQtyBtn:hover { background: var(--accent2); color: #fff; }
+.itemQtyNum {
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 16px;
+  text-align: center;
+  color: var(--text);
+}
+.sentNotice {
+  background: rgba(37, 211, 102, 0.12);
+  border: 1.5px solid rgba(37, 211, 102, 0.4);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2fd66e;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.confirmClearBtn {
+  width: 100%;
+  background: var(--surface2);
+  border: 1.5px solid var(--border2);
+  border-radius: 50px;
+  padding: 12px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.confirmClearBtn:hover { border-color: var(--primary); }

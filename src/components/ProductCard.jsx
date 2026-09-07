@@ -73,7 +73,7 @@ export default function ProductCard({ product }) {
           <button className={styles.qtyBtn} onClick={inc} aria-label="Agregar">+</button>
           {qty === 0
             ? <button className={styles.addBtn} onClick={inc}>Agregar</button>
-            : <button className={`${styles.addBtn} ${styles.added}`} onClick={() => {}}>✓ Listo</button>
+            : <span className={styles.added}>✓ Agregado</span>
           }
         </div>
       </div>

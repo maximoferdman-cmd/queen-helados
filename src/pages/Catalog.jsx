@@ -94,6 +94,9 @@ export default function Catalog() {
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
+          {search && (
+            <button className={styles.clearSearch} onClick={() => setSearch('')} aria-label="Borrar búsqueda">✕</button>
+          )}
         </div>
 
         {/* Pills de categorías: Todas + primeras 2 + botón Ver categorías */}

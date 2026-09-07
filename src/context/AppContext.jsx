@@ -126,7 +126,15 @@ export function AppProvider({ children }) {
 
   function buildWhatsAppUrl(clientName, clientAddress) {
     let msg = config.greeting + '\n\n'
-    cart.forEach(item => { msg += `• ${item.qty} ${item.name}\n` })
+    cart.forEach(item => {
+      const line = `• ${item.qty} ${item.name}`
+      msg += item.showPrice
+        ? `${line} — $${(item.price * item.qty).toLocaleString('es-AR')}\n`
+        : `${line}\n`
+    })
+    if (hasPrice && config.showTotals) {
+      msg += `\n*Total estimado: $${cartTotal.toLocaleString('es-AR')}*\n`
+    }
     if (clientName) msg += `\nNombre: ${clientName}`
     if (clientAddress) msg += `\nDirección: ${clientAddress}`
     msg += '\n\n' + config.farewell
