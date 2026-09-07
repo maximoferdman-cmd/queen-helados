@@ -58,7 +58,7 @@
 }
 .adminBtn:hover { color: #fff; background: rgba(255,255,255,0.2); }
 .logo {
-  height: 52px;
+  height: 96px;
   width: auto;
   object-fit: contain;
 }
