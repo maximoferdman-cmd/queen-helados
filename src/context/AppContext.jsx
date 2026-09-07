@@ -161,6 +161,10 @@ export function AppProvider({ children }) {
     return true
   }
 
+  async function updateCategory(id, changes) {
+    await updateDoc(doc(db, 'categories', id), changes)
+  }
+
   async function deleteCategory(id) {
     await deleteDoc(doc(db, 'categories', id))
   }
@@ -176,7 +180,7 @@ export function AppProvider({ children }) {
       cartCount, cartTotal, hasPrice,
       setItemQty, getItemQty, removeFromCart, clearCart, buildWhatsAppUrl,
       addProduct, updateProduct, deleteProduct,
-      addCategory, deleteCategory,
+      addCategory, deleteCategory, updateCategory,
       setConfig, getSubcategories,
       addPromoToCart, addBucketToCart, login, logout,
     }}>

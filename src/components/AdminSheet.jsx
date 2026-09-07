@@ -11,7 +11,7 @@ export default function AdminSheet({ open, onClose }) {
   const {
     products, categories, config,
     addProduct, updateProduct, deleteProduct,
-    addCategory, deleteCategory, setConfig,
+    addCategory, deleteCategory, updateCategory, setConfig,
     user, login, logout,
   } = useApp()
   const [tab, setTab] = useState(0)
@@ -23,6 +23,8 @@ export default function AdminSheet({ open, onClose }) {
   const [search, setSearch] = useState('')
   const [editingId, setEditingId] = useState(null)
   const [editForm, setEditForm] = useState(null)
+  const [editingCatId, setEditingCatId] = useState(null)
+  const [editCatForm, setEditCatForm] = useState(null)
 
   if (!open) return null
 
@@ -81,6 +83,23 @@ export default function AdminSheet({ open, onClose }) {
     const ok = await addCategory({ id, name: catForm.name, emoji: catForm.emoji || '📁' })
     if (!ok) return alert('Ya existe una categoría con ese nombre')
     setCatForm({ emoji: '', name: '' })
+  }
+
+  function startEditCat(c) {
+    setEditingCatId(c.id)
+    setEditCatForm({ name: c.name, emoji: c.emoji })
+  }
+
+  function cancelEditCat() {
+    setEditingCatId(null)
+    setEditCatForm(null)
+  }
+
+  function saveEditCat(id) {
+    if (!editCatForm.name.trim()) return alert('Ingresá el nombre')
+    updateCategory(id, editCatForm)
+    setEditingCatId(null)
+    setEditCatForm(null)
   }
 
   function handleSaveConfig() {
@@ -260,11 +279,25 @@ export default function AdminSheet({ open, onClose }) {
             <button className={styles.saveBtn} style={{ marginBottom: 20 }} onClick={handleAddCat}>+ Agregar Categoría</button>
             <div className={styles.list}>
               {categories.map(c => (
-                <div key={c.id} className={styles.catItem}>
-                  <span>{c.emoji}</span>
-                  <span className={styles.catName}>{c.name}</span>
-                  <button className={`${styles.miniBtn} ${styles.del}`} onClick={() => { if (window.confirm('¿Eliminar?')) deleteCategory(c.id) }}>🗑</button>
-                </div>
+                editingCatId === c.id ? (
+                  <div key={c.id} className={styles.catItem} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 8 }}>
+                    <div className={styles.row2}>
+                      <input className={styles.input} placeholder="Emoji" value={editCatForm.emoji} onChange={e => setEditCatForm(f => ({ ...f, emoji: e.target.value }))} />
+                      <input className={styles.input} placeholder="Nombre" value={editCatForm.name} onChange={e => setEditCatForm(f => ({ ...f, name: e.target.value }))} />
+                    </div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button className={styles.saveBtn} style={{ flex: 1 }} onClick={() => saveEditCat(c.id)}>Guardar ✓</button>
+                      <button className={styles.miniBtn} onClick={cancelEditCat}>Cancelar</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div key={c.id} className={styles.catItem}>
+                    <span>{c.emoji}</span>
+                    <span className={styles.catName}>{c.name}</span>
+                    <button className={styles.miniBtn} onClick={() => startEditCat(c)}>✏️</button>
+                    <button className={`${styles.miniBtn} ${styles.del}`} onClick={() => { if (window.confirm('¿Eliminar?')) deleteCategory(c.id) }}>🗑</button>
+                  </div>
+                )
               ))}
             </div>
           </div>
