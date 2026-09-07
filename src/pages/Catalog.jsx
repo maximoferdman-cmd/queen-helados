@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import PromoSheet from '../components/PromoSheet'
 import { useApp } from '../context/AppContext'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import ProductCard from '../components/ProductCard'
 import styles from './Catalog.module.css'
 
@@ -10,6 +11,8 @@ export default function Catalog() {
   const [activeSubcat, setActiveSubcat] = useState(null)
   const [search, setSearch] = useState('')
   const [promoOpen, setPromoOpen] = useState(false)
+  const [categoriesOpen, setCategoriesOpen] = useState(false)
+  useLockBodyScroll(categoriesOpen)
 
   const handleCatClick = (catId) => {
     setActiveCat(catId)
@@ -93,20 +96,16 @@ export default function Catalog() {
           />
         </div>
 
-        {/* Pills de categorías con flechitas */}
+        {/* Pills de categorías: Todas + primeras 2 + botón Ver categorías */}
         <div className={styles.pillsOuter}>
-          <button
-            className={styles.pillArrow}
-            onClick={() => document.getElementById('pills-scroll').scrollBy({ left: -150, behavior: 'smooth' })}
-          >‹</button>
-          <div id="pills-scroll" className={styles.pillsWrap}>
+          <div className={styles.pillsWrap}>
             <button
               className={`${styles.pill} ${activeCat === 'todas' ? styles.pillActive : ''}`}
               onClick={() => handleCatClick('todas')}
             >
               🌟 Todas
             </button>
-            {categories.map(cat => (
+            {categories.slice(0, 2).map(cat => (
               <button
                 key={cat.id}
                 className={`${styles.pill} ${activeCat === cat.id ? styles.pillActive : ''}`}
@@ -115,12 +114,41 @@ export default function Catalog() {
                 {cat.emoji} {cat.name}
               </button>
             ))}
+            <button className={styles.pill} onClick={() => setCategoriesOpen(true)}>
+              ☰ Ver categorías
+            </button>
           </div>
-          <button
-            className={styles.pillArrow}
-            onClick={() => document.getElementById('pills-scroll').scrollBy({ left: 150, behavior: 'smooth' })}
-          >›</button>
         </div>
+
+        {/* Modal: todas las categorías en grilla */}
+        {categoriesOpen && (
+          <div className={styles.catModalOverlay} onClick={() => setCategoriesOpen(false)}>
+            <div className={styles.catModalSheet} onClick={e => e.stopPropagation()}>
+              <div className={styles.catModalHeader}>
+                <h2 className={styles.catModalTitle}>Todas las categorías</h2>
+                <button className={styles.catModalClose} onClick={() => setCategoriesOpen(false)}>✕</button>
+              </div>
+              <div className={styles.catModalGrid}>
+                {categories.map(cat => (
+                  <button
+                    key={cat.id}
+                    className={`${styles.catModalCard} ${activeCat === cat.id ? styles.catModalCardActive : ''}`}
+                    onClick={() => { handleCatClick(cat.id); setCategoriesOpen(false) }}
+                  >
+                    <span className={styles.catModalEmoji}>{cat.emoji}</span>
+                    <span>{cat.name}</span>
+                  </button>
+                ))}
+              </div>
+              <button
+                className={styles.catModalAllBtn}
+                onClick={() => { handleCatClick('todas'); setCategoriesOpen(false) }}
+              >
+                Ver todos los productos ›
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Subcategorías */}
         {currentSubcats.length > 0 && (
