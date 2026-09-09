@@ -1,12 +1,18 @@
 import { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { bucketGroups } from '../data/buckets'
+import { GIO_WHOLESALE_PRICE } from '../data/gio'
+import { SWEET_CREAM_PRICE } from '../data/sweetcream'
 import BucketSheet from './BucketSheet'
+import GioSheet from './GioSheet'
+import SweetCreamSheet from './SweetCreamSheet'
 import styles from './ProductCard.module.css'
 
 export default function ProductCard({ product }) {
   const { getItemQty, setItemQty } = useApp()
   const [bucketOpen, setBucketOpen] = useState(false)
+  const [gioOpen, setGioOpen] = useState(false)
+  const [sweetCreamOpen, setSweetCreamOpen] = useState(false)
   const qty = getItemQty(product.id)
 
   const inc = () => setItemQty(product.id, qty + 1)
@@ -17,6 +23,52 @@ export default function ProductCard({ product }) {
   const currentPrice = hasWholesale && qty >= product.wholesaleMin
     ? product.priceWholesale
     : product.price
+
+  // --- Producto especial: GIO, 10 sabores con promo mayorista combinada ---
+  if (product.isGio) {
+    return (
+      <div className={styles.card}>
+        <div className={styles.imgWrap}>
+          {product.image
+            ? <img src={product.image} alt={product.name} className={styles.img} />
+            : <span className={styles.emoji}>{product.emoji || '🍫'}</span>
+          }
+        </div>
+        <div className={styles.info}>
+          <p className={styles.name}>{product.name}</p>
+          {product.desc && <p className={styles.desc}>{product.desc}</p>}
+          <p className={styles.price}>Desde ${GIO_WHOLESALE_PRICE.toLocaleString('es-AR')}</p>
+          <button className={styles.addBtn} style={{ width: '100%' }} onClick={() => setGioOpen(true)}>
+            Ver sabores 🍫
+          </button>
+        </div>
+        {gioOpen && <GioSheet onClose={() => setGioOpen(false)} />}
+      </div>
+    )
+  }
+
+  // --- Producto especial: Sweet Cream, caja x40 de un sabor a elegir ---
+  if (product.isSweetCream) {
+    return (
+      <div className={styles.card}>
+        <div className={styles.imgWrap}>
+          {product.image
+            ? <img src={product.image} alt={product.name} className={styles.img} />
+            : <span className={styles.emoji}>{product.emoji || '🧊'}</span>
+          }
+        </div>
+        <div className={styles.info}>
+          <p className={styles.name}>{product.name}</p>
+          {product.desc && <p className={styles.desc}>{product.desc}</p>}
+          <p className={styles.price}>${SWEET_CREAM_PRICE.toLocaleString('es-AR')} / caja x40</p>
+          <button className={styles.addBtn} style={{ width: '100%' }} onClick={() => setSweetCreamOpen(true)}>
+            Elegir sabor 🧊
+          </button>
+        </div>
+        {sweetCreamOpen && <SweetCreamSheet onClose={() => setSweetCreamOpen(false)} />}
+      </div>
+    )
+  }
 
   // --- Producto especial: balde 10L con sabor a elegir ---
   if (product.isBucket) {

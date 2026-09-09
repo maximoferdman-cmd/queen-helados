@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import { bucketGroups } from '../data/buckets'
+import { GIO_WHOLESALE_PRICE } from '../data/gio'
+import { SWEET_CREAM_PRICE } from '../data/sweetcream'
 import styles from './AdminSheet.module.css'
 
 const TABS = ['Productos', 'Nuevo', 'Categorías', 'Config']
@@ -15,7 +17,7 @@ export default function AdminSheet({ open, onClose }) {
     user, login, logout,
   } = useApp()
   const [tab, setTab] = useState(0)
-  const [form, setForm] = useState({ name: '', desc: '', price: '', emoji: '', image: '', cat: '', showPrice: true, active: true, bucketGroupId: '' })
+  const [form, setForm] = useState({ name: '', desc: '', price: '', emoji: '', image: '', cat: '', showPrice: true, active: true, bucketGroupId: '', isGio: false, isSweetCream: false })
   const [catForm, setCatForm] = useState({ emoji: '', name: '' })
   const [cfgForm, setCfgForm] = useState({ ...config })
   const [loginForm, setLoginForm] = useState({ email: '', password: '' })
@@ -41,14 +43,18 @@ export default function AdminSheet({ open, onClose }) {
     if (!form.name.trim()) return alert('Ingresá el nombre')
     const isBucket = !!form.bucketGroupId
     const group = isBucket ? bucketGroups.find(g => g.id === form.bucketGroupId) : null
+    let price = parseFloat(form.price) || 0
+    if (isBucket) price = group.price
+    if (form.isGio) price = GIO_WHOLESALE_PRICE
+    if (form.isSweetCream) price = SWEET_CREAM_PRICE
     addProduct({
       ...form,
       isBucket,
-      price: isBucket ? group.price : (parseFloat(form.price) || 0),
+      price,
       showPrice: true,
       cat: form.cat || categories[0]?.id,
     })
-    setForm({ name: '', desc: '', price: '', emoji: '', image: '', cat: '', showPrice: true, active: true, bucketGroupId: '' })
+    setForm({ name: '', desc: '', price: '', emoji: '', image: '', cat: '', showPrice: true, active: true, bucketGroupId: '', isGio: false, isSweetCream: false })
     setTab(0)
   }
 
@@ -253,6 +259,22 @@ export default function AdminSheet({ open, onClose }) {
             </select>
             {form.bucketGroupId && (
               <p className={styles.notice}>💡 El cliente va a poder elegir el sabor entre los {bucketGroups.find(g => g.id === form.bucketGroupId)?.flavors.length} de "{bucketGroups.find(g => g.id === form.bucketGroupId)?.label}". El precio se toma automático de ese tipo.</p>
+            )}
+
+            <div className={styles.toggleRow}>
+              <span className={styles.toggleLabel}>Es el producto GIO (10 sabores, promo mayorista combinada)</span>
+              <label className={styles.toggle}><input type="checkbox" checked={form.isGio} onChange={e => setForm(f => ({ ...f, isGio: e.target.checked, isSweetCream: false }))} /><span className={styles.slider} /></label>
+            </div>
+            {form.isGio && (
+              <p className={styles.notice}>💡 El cliente va a poder elegir entre los 10 sabores de GIO. El precio baja solo cuando entre todos (menos Pistachos) suman 6 o más.</p>
+            )}
+
+            <div className={styles.toggleRow}>
+              <span className={styles.toggleLabel}>Es Sweet Cream (caja x40, elegir sabor y cantidad)</span>
+              <label className={styles.toggle}><input type="checkbox" checked={form.isSweetCream} onChange={e => setForm(f => ({ ...f, isSweetCream: e.target.checked, isGio: false }))} /><span className={styles.slider} /></label>
+            </div>
+            {form.isSweetCream && (
+              <p className={styles.notice}>💡 El cliente va a elegir 1 sabor de los 9 y cuántas cajas quiere, a ${SWEET_CREAM_PRICE.toLocaleString('es-AR')} la caja.</p>
             )}
 
             <label className={styles.label}>Categoría</label>

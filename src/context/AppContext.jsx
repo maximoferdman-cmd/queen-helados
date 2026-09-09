@@ -4,6 +4,12 @@ import {
 } from 'firebase/firestore'
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { db, auth } from '../firebase'
+import { GIO_RETAIL_PRICE, GIO_WHOLESALE_PRICE, GIO_WHOLESALE_MIN, GIO_PISTACHO_PRICE } from '../data/gio'
+import { SWEET_CREAM_PRICE } from '../data/sweetcream'
+
+function slugify(s) {
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+}
 
 const AppContext = createContext(null)
 
@@ -61,8 +67,24 @@ export function AppProvider({ children }) {
 
   // --- Cart helpers (siguen en memoria local, no van a Firestore) ---
   const cartCount = cart.reduce((a, c) => a + c.qty, 0)
-  const cartTotal = cart.reduce((a, c) => a + (c.showPrice ? c.price * c.qty : 0), 0)
   const hasPrice  = cart.some(c => c.showPrice)
+
+  // Precio real de un ítem del carrito. Para la mayoría de los productos
+  // es simplemente su precio guardado. Para GIO (sin contar Pistachos) el
+  // precio depende de cuánto se acumuló EN TOTAL entre todos los sabores
+  // del carrito: si entre todos llegan a 6 unidades, todos pasan a precio
+  // mayorista — por eso no se puede guardar un precio fijo por ítem.
+  function effectiveUnitPrice(item) {
+    if (item.giosGroup === 'gio' && item.giosPromoEligible) {
+      const totalEligible = cart
+        .filter(c => c.giosGroup === 'gio' && c.giosPromoEligible)
+        .reduce((s, c) => s + c.qty, 0)
+      return totalEligible >= GIO_WHOLESALE_MIN ? GIO_WHOLESALE_PRICE : GIO_RETAIL_PRICE
+    }
+    return item.price
+  }
+
+  const cartTotal = cart.reduce((a, c) => a + (c.showPrice ? effectiveUnitPrice(c) * c.qty : 0), 0)
 
   function setItemQty(productId, qty) {
     const product = products.find(p => p.id === productId)
@@ -124,12 +146,68 @@ export function AppProvider({ children }) {
     }])
   }
 
+  // --- GIO: 10 sabores, uno de los cuales (Pistachos) queda afuera de la
+  // promo mayorista. Cada sabor es su propio ítem de carrito con id estable
+  // (así reabrir el panel actualiza en vez de duplicar). El precio real de
+  // cada uno se calcula con effectiveUnitPrice(), no se guarda fijo acá.
+  function getGioFlavorQty(flavorName) {
+    const id = `gio_${slugify(flavorName)}`
+    return cart.find(c => c.id === id)?.qty || 0
+  }
+
+  function setGioFlavorQty(flavorName, qty, isPistacho) {
+    const id = `gio_${slugify(flavorName)}`
+    setCart(prev => {
+      if (qty <= 0) return prev.filter(c => c.id !== id)
+      const basePrice = isPistacho ? GIO_PISTACHO_PRICE : GIO_RETAIL_PRICE
+      const item = {
+        id,
+        name: `GIO ${flavorName}`,
+        emoji: '🍫',
+        price: basePrice,
+        showPrice: true,
+        qty,
+        giosGroup: 'gio',
+        giosPromoEligible: !isPistacho,
+      }
+      const exists = prev.find(c => c.id === id)
+      if (exists) return prev.map(c => c.id === id ? item : c)
+      return [...prev, item]
+    })
+  }
+
+  // --- Sweet Cream: caja x40 de un solo sabor, sin descuento por cantidad.
+  function getSweetCreamFlavorQty(flavorName) {
+    const id = `sweetcream_${slugify(flavorName)}`
+    return cart.find(c => c.id === id)?.qty || 0
+  }
+
+  function setSweetCreamFlavorQty(flavorName, qty) {
+    const id = `sweetcream_${slugify(flavorName)}`
+    setCart(prev => {
+      if (qty <= 0) return prev.filter(c => c.id !== id)
+      const item = {
+        id,
+        name: `Sweet Cream ${flavorName} (caja x40)`,
+        emoji: '🧊',
+        price: SWEET_CREAM_PRICE,
+        showPrice: true,
+        qty,
+        isSweetCreamItem: true,
+      }
+      const exists = prev.find(c => c.id === id)
+      if (exists) return prev.map(c => c.id === id ? item : c)
+      return [...prev, item]
+    })
+  }
+
   function buildWhatsAppUrl(clientName, clientAddress) {
     let msg = config.greeting + '\n\n'
     cart.forEach(item => {
+      const unitPrice = effectiveUnitPrice(item)
       const line = `• ${item.qty} ${item.name}`
       msg += item.showPrice
-        ? `${line} — $${(item.price * item.qty).toLocaleString('es-AR')}\n`
+        ? `${line} — $${(unitPrice * item.qty).toLocaleString('es-AR')}\n`
         : `${line}\n`
     })
     if (hasPrice && config.showTotals) {
@@ -185,12 +263,14 @@ export function AppProvider({ children }) {
   return (
     <AppContext.Provider value={{
       products, categories, config, cart, loading, user,
-      cartCount, cartTotal, hasPrice,
+      cartCount, cartTotal, hasPrice, effectiveUnitPrice,
       setItemQty, getItemQty, removeFromCart, clearCart, buildWhatsAppUrl,
       addProduct, updateProduct, deleteProduct,
       addCategory, deleteCategory, updateCategory,
       setConfig, getSubcategories,
       addPromoToCart, addBucketToCart, login, logout,
+      getGioFlavorQty, setGioFlavorQty,
+      getSweetCreamFlavorQty, setSweetCreamFlavorQty,
     }}>
       {children}
     </AppContext.Provider>

@@ -5,7 +5,7 @@ import styles from './CartSheet.module.css'
 
 export default function CartSheet({ open, onClose }) {
   useLockBodyScroll(open)
-  const { cart, cartTotal, hasPrice, config, removeFromCart, clearCart, buildWhatsAppUrl, getItemQty, setItemQty } = useApp()
+  const { cart, cartTotal, hasPrice, config, removeFromCart, clearCart, buildWhatsAppUrl, getItemQty, setItemQty, effectiveUnitPrice } = useApp()
   const [clientName, setClientName] = useState('')
   const [clientAddress, setClientAddress] = useState('')
   const [justSent, setJustSent] = useState(false)
@@ -50,8 +50,9 @@ export default function CartSheet({ open, onClose }) {
           <>
             <div className={styles.items}>
               {cart.map(item => {
-                const isFixedQty = item.isPromo || item.isBucket
+                const isFixedQty = item.isPromo || item.isBucket || item.giosGroup === 'gio' || item.isSweetCreamItem
                 const qty = isFixedQty ? item.qty : getItemQty(item.id)
+                const unitPrice = effectiveUnitPrice(item)
                 return (
                   <div key={item.id} className={styles.item}>
                     <div className={styles.itemEmoji}>{item.emoji}</div>
@@ -68,7 +69,7 @@ export default function CartSheet({ open, onClose }) {
                       )}
                     </div>
                     {item.showPrice && (
-                      <p className={styles.itemPrice}>${(item.price * item.qty).toLocaleString('es-AR')}</p>
+                      <p className={styles.itemPrice}>${(unitPrice * item.qty).toLocaleString('es-AR')}</p>
                     )}
                     <button className={styles.delBtn} onClick={() => removeFromCart(item.id)} aria-label="Eliminar">🗑</button>
                   </div>
