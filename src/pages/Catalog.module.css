@@ -397,12 +397,12 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 7px 12px;
+  padding: 7px 10px;
   border-radius: 50px;
   border: 1.5px solid rgba(255,255,255,0.18);
   background: rgba(255,255,255,0.07);
   color: rgba(255,255,255,0.8);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;

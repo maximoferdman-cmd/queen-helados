@@ -17,6 +17,7 @@ export default function Catalog() {
   const handleCatClick = (catId) => {
     setActiveCat(catId)
     setActiveSubcat(null)
+    setSearch('')
   }
 
   const currentSubcats = activeCat !== 'todas' ? getSubcategories(activeCat) : []
@@ -45,7 +46,7 @@ export default function Catalog() {
           <p className={styles.heroDesc}>{config.description}</p>
 
           <div className={styles.heroChips}>
-            <span className={styles.heroChip}>🚚 Delivery sin cargo en tu zona</span>
+            <span className={styles.heroChip}>🚚 Entregas sin cargo en tu zona</span>
           </div>
 
    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px' }}>
