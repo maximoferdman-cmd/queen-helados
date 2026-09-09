@@ -5,6 +5,34 @@ import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import ProductCard from '../components/ProductCard'
 import styles from './Catalog.module.css'
 
+// --- Búsqueda tolerante a errores de tipeo ---
+// Solo se usa como respaldo cuando la búsqueda exacta no encuentra nada.
+function normalizeText(s) {
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+}
+
+function levenshtein(a, b) {
+  const m = a.length, n = b.length
+  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0))
+  for (let i = 0; i <= m; i++) dp[i][0] = i
+  for (let j = 0; j <= n; j++) dp[0][j] = j
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      dp[i][j] = a[i - 1] === b[j - 1]
+        ? dp[i - 1][j - 1]
+        : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
+    }
+  }
+  return dp[m][n]
+}
+
+function fuzzyMatches(productText, term) {
+  const words = normalizeText(productText).split(/\s+/).filter(Boolean)
+  const t = normalizeText(term)
+  const maxDist = t.length <= 3 ? 1 : t.length <= 6 ? 2 : 3
+  return words.some(w => levenshtein(w, t) <= maxDist)
+}
+
 export default function Catalog() {
   const { products, categories, config, getSubcategories } = useApp()
   const [activeCat, setActiveCat] = useState('todas')
@@ -22,15 +50,27 @@ export default function Catalog() {
 
   const currentSubcats = activeCat !== 'todas' ? getSubcategories(activeCat) : []
 
+  const exactSearchResults = search
+    ? products.filter(p => p.active && (p.name + p.desc).toLowerCase().includes(search.toLowerCase()))
+    : null
+
   const filtered = products.filter(p => {
     if (!p.active) return false
-    if (search) return (p.name + p.desc).toLowerCase().includes(search.toLowerCase())
+    if (search) {
+      if (exactSearchResults.length > 0) {
+        return (p.name + p.desc).toLowerCase().includes(search.toLowerCase())
+      }
+      // No hubo resultados exactos: probamos con tolerancia a errores de tipeo
+      return fuzzyMatches(p.name + ' ' + p.desc, search)
+    }
     if (activeCat !== 'todas') {
       if (p.cat !== activeCat) return false
       if (activeSubcat && p.subcat !== activeSubcat) return false
     }
     return true
   })
+
+  const usingFuzzy = search && exactSearchResults && exactSearchResults.length === 0 && filtered.length > 0
 
   const visibleCats = activeCat === 'todas'
     ? categories.filter(c => products.some(p => p.active && p.cat === c.id))
@@ -175,6 +215,11 @@ export default function Catalog() {
 
         {/* Productos */}
         <div className={styles.catalog}>
+          {usingFuzzy && (
+            <p style={{ fontSize: 12, color: 'var(--text2)', padding: '0 16px 8px' }}>
+              No encontramos "{search}" exacto — te mostramos resultados parecidos
+            </p>
+          )}
           {visibleCats.map(cat => {
             const catProds = filtered.filter(p => p.cat === cat.id)
             if (catProds.length === 0) return null

@@ -4,6 +4,7 @@ import Header from './components/Header'
 import Catalog from './pages/Catalog'
 import CartSheet from './components/CartSheet'
 import AdminSheet from './components/AdminSheet'
+import BackToTopButton from './components/BackToTopButton'
 import styles from './App.module.css'
 
 function AppContent() {
@@ -44,6 +45,7 @@ function AppContent() {
 
       <CartSheet open={cartOpen} onClose={() => setCartOpen(false)} />
       <AdminSheet open={adminOpen} onClose={() => setAdminOpen(false)} />
+      <BackToTopButton />
     </div>
   )
 }
