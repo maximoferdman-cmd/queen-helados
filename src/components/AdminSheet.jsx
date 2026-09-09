@@ -17,7 +17,7 @@ export default function AdminSheet({ open, onClose }) {
     user, login, logout,
   } = useApp()
   const [tab, setTab] = useState(0)
-  const [form, setForm] = useState({ name: '', desc: '', price: '', emoji: '', image: '', cat: '', showPrice: true, active: true, bucketGroupId: '', isGio: false, isSweetCream: false })
+  const [form, setForm] = useState({ name: '', desc: '', price: '', emoji: '', image: '', cat: '', showPrice: true, active: true, bucketGroupId: '', isGio: false, isSweetCream: false, priceWholesale: '', wholesaleMin: '' })
   const [catForm, setCatForm] = useState({ emoji: '', name: '' })
   const [cfgForm, setCfgForm] = useState({ ...config })
   const [loginForm, setLoginForm] = useState({ email: '', password: '' })
@@ -47,14 +47,17 @@ export default function AdminSheet({ open, onClose }) {
     if (isBucket) price = group.price
     if (form.isGio) price = GIO_WHOLESALE_PRICE
     if (form.isSweetCream) price = SWEET_CREAM_PRICE
+    const isSpecial = isBucket || form.isGio || form.isSweetCream
     addProduct({
       ...form,
       isBucket,
       price,
       showPrice: true,
       cat: form.cat || categories[0]?.id,
+      priceWholesale: isSpecial ? null : (parseFloat(form.priceWholesale) || null),
+      wholesaleMin: isSpecial ? null : (parseInt(form.wholesaleMin) || null),
     })
-    setForm({ name: '', desc: '', price: '', emoji: '', image: '', cat: '', showPrice: true, active: true, bucketGroupId: '', isGio: false, isSweetCream: false })
+    setForm({ name: '', desc: '', price: '', emoji: '', image: '', cat: '', showPrice: true, active: true, bucketGroupId: '', isGio: false, isSweetCream: false, priceWholesale: '', wholesaleMin: '' })
     setTab(0)
   }
 
@@ -68,6 +71,8 @@ export default function AdminSheet({ open, onClose }) {
       image: p.image || '',
       cat: p.cat,
       showPrice: p.showPrice,
+      priceWholesale: p.priceWholesale || '',
+      wholesaleMin: p.wholesaleMin || '',
     })
   }
 
@@ -78,7 +83,12 @@ export default function AdminSheet({ open, onClose }) {
 
   function saveEdit(id) {
     if (!editForm.name.trim()) return alert('Ingresá el nombre')
-    updateProduct(id, { ...editForm, price: parseFloat(editForm.price) || 0 })
+    updateProduct(id, {
+      ...editForm,
+      price: parseFloat(editForm.price) || 0,
+      priceWholesale: parseFloat(editForm.priceWholesale) || null,
+      wholesaleMin: parseInt(editForm.wholesaleMin) || null,
+    })
     setEditingId(null)
     setEditForm(null)
   }
@@ -194,6 +204,17 @@ export default function AdminSheet({ open, onClose }) {
                     </div>
                     <label className={styles.label}>Imagen (ruta del archivo)</label>
                     <input className={styles.input} placeholder="/balde-comunes.jpg" value={editForm.image} onChange={e => setEditForm(f => ({ ...f, image: e.target.value }))} />
+                    <label className={styles.label}>Precio mayorista ($) — opcional</label>
+                    <div className={styles.row2}>
+                      <div>
+                        <input className={styles.input} type="number" placeholder="Ej: 1000" value={editForm.priceWholesale} onChange={e => setEditForm(f => ({ ...f, priceWholesale: e.target.value }))} />
+                        <p className={styles.notice} style={{ marginTop: 4 }}>Precio con descuento</p>
+                      </div>
+                      <div>
+                        <input className={styles.input} type="number" placeholder="Ej: 6" value={editForm.wholesaleMin} onChange={e => setEditForm(f => ({ ...f, wholesaleMin: e.target.value }))} />
+                        <p className={styles.notice} style={{ marginTop: 4 }}>Cantidad mínima</p>
+                      </div>
+                    </div>
                     <label className={styles.label}>Categoría</label>
                     <select className={styles.input} value={editForm.cat} onChange={e => setEditForm(f => ({ ...f, cat: e.target.value }))}>
                       {categories.map(c => <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
@@ -212,7 +233,10 @@ export default function AdminSheet({ open, onClose }) {
                     <span className={styles.pEmoji}>{p.emoji || '📦'}</span>
                     <div className={styles.pInfo}>
                       <p className={styles.pName}>{p.name}</p>
-                      <p className={styles.pMeta}>{categories.find(c => c.id === p.cat)?.name || p.cat} · {p.showPrice ? '$' + p.price.toLocaleString('es-AR') : 'Sin precio'}</p>
+                      <p className={styles.pMeta}>
+                        {categories.find(c => c.id === p.cat)?.name || p.cat} · {p.showPrice ? '$' + p.price.toLocaleString('es-AR') : 'Sin precio'}
+                        {p.priceWholesale && p.wholesaleMin && ` · Mayorista: $${p.priceWholesale.toLocaleString('es-AR')} desde x${p.wholesaleMin}`}
+                      </p>
                     </div>
                     <div className={styles.pActions}>
                       <button className={styles.miniBtn} onClick={() => startEdit(p)}>✏️ Editar</button>
@@ -250,6 +274,22 @@ export default function AdminSheet({ open, onClose }) {
             <label className={styles.label}>Imagen (ruta del archivo)</label>
             <input className={styles.input} placeholder="/balde-comunes.jpg" value={form.image} onChange={e => setForm(f => ({ ...f, image: e.target.value }))} />
             <p className={styles.notice}>💡 Primero subí el archivo a la carpeta "public" del proyecto y hacé push. Después pegá acá el nombre, empezando con "/" (ej: /balde-comunes.jpg).</p>
+
+            {!form.bucketGroupId && !form.isGio && !form.isSweetCream && (
+              <>
+                <label className={styles.label}>Precio mayorista ($) — opcional</label>
+                <div className={styles.row2}>
+                  <div>
+                    <input className={styles.input} type="number" placeholder="Ej: 1000" value={form.priceWholesale} onChange={e => setForm(f => ({ ...f, priceWholesale: e.target.value }))} />
+                    <p className={styles.notice} style={{ marginTop: 4 }}>Precio con descuento</p>
+                  </div>
+                  <div>
+                    <input className={styles.input} type="number" placeholder="Ej: 6" value={form.wholesaleMin} onChange={e => setForm(f => ({ ...f, wholesaleMin: e.target.value }))} />
+                    <p className={styles.notice} style={{ marginTop: 4 }}>Cantidad mínima</p>
+                  </div>
+                </div>
+              </>
+            )}
             <label className={styles.label}>¿Es un balde 10L?</label>
             <select className={styles.input} value={form.bucketGroupId} onChange={e => setForm(f => ({ ...f, bucketGroupId: e.target.value }))}>
               <option value="">No, es un producto normal</option>

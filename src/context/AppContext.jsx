@@ -205,7 +205,8 @@ export function AppProvider({ children }) {
     let msg = config.greeting + '\n\n'
     cart.forEach(item => {
       const unitPrice = effectiveUnitPrice(item)
-      const line = `• ${item.qty} ${item.name}`
+      let line = `• ${item.qty} ${item.name}`
+      if (item.variantDesc) line += `\n   (${item.variantDesc})`
       msg += item.showPrice
         ? `${line} — $${(unitPrice * item.qty).toLocaleString('es-AR')}\n`
         : `${line}\n`

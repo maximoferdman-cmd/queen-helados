@@ -59,7 +59,10 @@ export default function CartSheet({ open, onClose }) {
                     <div className={styles.itemInfo}>
                       <p className={styles.itemName}>{item.name}</p>
                       {isFixedQty ? (
-                        <p className={styles.itemSub}>Cantidad: {item.qty}</p>
+                        <p className={styles.itemSub}>
+                          Cantidad: {item.qty}
+                          {item.variantDesc && <><br />{item.variantDesc}</>}
+                        </p>
                       ) : (
                         <div className={styles.itemQtyRow}>
                           <button className={styles.itemQtyBtn} onClick={() => setItemQty(item.id, Math.max(0, qty - 1))} aria-label="Quitar uno">−</button>
